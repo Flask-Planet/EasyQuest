@@ -61,7 +61,7 @@
                             <button class="w-100 mt-1">Enter Quest</button>
                         </a>
 
-                        {% if session.get('user_type') == 10 %}
+                        {% if session.get('permission_level') == 10 %}
                             <a href="{{ url_for('www.quest_character_manager', quest_id=quest.quest_id) }}">
                                 <button class="w-100 mt-1">Character Manager</button>
                             </a>
@@ -71,7 +71,7 @@
                         <button class="w-100 mt-1" disabled>Enter Quest</button>
                     {% endif %}
 
-                    {% if session.get('user_type') == 10 %}
+                    {% if session.get('permission_level') == 10 %}
                         <a href="{{ url_for('www.edit_quest', quest_id=quest.quest_id) }}">
                             <button class="w-100 mt-1">Edit</button>
                         </a>

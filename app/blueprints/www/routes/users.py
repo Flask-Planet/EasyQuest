@@ -7,7 +7,7 @@ from .. import bp
 
 @bp.get("/users")
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permissions', 10, 'www.index')
+@permission_check('permission_level', 10, 'www.index')
 def users():
     q_users = User.read(all_rows=True, order_by="created")
 

@@ -55,7 +55,7 @@ def edit_quest_character(character_id, quest_id):
 
 @bp.get("/approve-character/<character_id>/for/<quest_id>")
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permissions', 10, 'www.index')
+@permission_check('permission_level', 10, 'www.index')
 def approve_quest_character(character_id, quest_id):
     Character.update(
         id_=character_id,
@@ -69,7 +69,7 @@ def approve_quest_character(character_id, quest_id):
 
 @bp.get("/lock-character/<character_id>/for/<quest_id>")
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permissions', 10, 'www.index')
+@permission_check('permission_level', 10, 'www.index')
 def lock_quest_character(character_id, quest_id):
     Character.update(
         id_=character_id,
@@ -83,7 +83,7 @@ def lock_quest_character(character_id, quest_id):
 
 @bp.get("/unlock-character/<character_id>/for/<quest_id>")
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permissions', 10, 'www.index')
+@permission_check('permission_level', 10, 'www.index')
 def unlock_quest_character(character_id, quest_id):
     Character.update(
         id_=character_id,
@@ -122,7 +122,7 @@ def add_character_to_quest(quest_id):
 
 @bp.post("/update-character-stats/<character_id>/to/<quest_id>")
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permissions', 10, 'www.index')
+@permission_check('permission_level', 10, 'www.index')
 def update_character_stats(character_id, quest_id):
     health = request.form.get("health")
     sleeping = True if request.form.get("sleeping") == 'true' else False

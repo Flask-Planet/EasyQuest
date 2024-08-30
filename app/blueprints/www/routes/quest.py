@@ -1,7 +1,7 @@
 import json
 
 from flask import render_template, request, redirect, url_for, flash, session
-from flask_bigapp.security import login_check, permission_check
+from flask_imp.security import login_check, permission_check
 
 from app.models import dater
 from app.models.character import Character
@@ -11,7 +11,7 @@ from .. import bp
 
 
 @bp.get("/quest/<quest_id>")
-@login_check('authenticated', 'auth.login')
+@login_check('authenticated', True, 'auth.login')
 def quest(quest_id):
     q_quest = Quest.read(id_=quest_id)
 
@@ -34,8 +34,8 @@ def quest(quest_id):
 
 
 @bp.get("/quest/<quest_id>/character-manager")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def quest_character_manager(quest_id):
     q_quest = Quest.read(id_=quest_id)
 
@@ -66,8 +66,8 @@ def quest_character_manager(quest_id):
 
 
 @bp.get("/edit/quest/<quest_id>")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def edit_quest(quest_id):
     q_quest = Quest.read(id_=quest_id)
 
@@ -85,8 +85,8 @@ def edit_quest(quest_id):
 
 
 @bp.get("/make-pending/quest/<quest_id>")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def quest_pending(quest_id):
     Quest.update(id_=quest_id, values={"live": False})
     flash("Quest is now pending", "good")
@@ -96,8 +96,8 @@ def quest_pending(quest_id):
 
 
 @bp.get("/make-live/quest/<quest_id>")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def quest_live(quest_id):
     Quest.update(id_=quest_id, values={"live": True})
     flash("Quest is now live", "good")
@@ -107,8 +107,8 @@ def quest_live(quest_id):
 
 
 @bp.post("/add/quest")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def add_quest():
     title = request.form.get("title")
     fk_genre_id = request.form.get("fk_genre_id")
@@ -126,8 +126,8 @@ def add_quest():
 
 
 @bp.post("/update/quest/<quest_id>")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def update_quest(quest_id):
     title = request.form.get("title")
     summary = request.form.get("summary")
@@ -151,8 +151,8 @@ def update_quest(quest_id):
 
 
 @bp.get("/delete/quest/<quest_id>")
-@login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
+@login_check('authenticated', True, 'auth.login')
+@permission_check('permissions', 10, 'www.index')
 def delete_quest(quest_id):
     Quest.delete(fields={"quest_id": quest_id}, return_deleted=True)
     flash(f"Quest deleted", "good")

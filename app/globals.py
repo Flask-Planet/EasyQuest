@@ -1,11 +1,11 @@
-vitals = {
+VITALS = {
     'health': 100,
     'sleeping': False,
     'confused': False,
     'poisoned': False,
 }
 
-stats = {
+STATS = {
     'strength': 1,
     'agility': 1,
     'intelligence': 1,

@@ -1,12 +1,12 @@
-from flask import render_template, redirect, url_for, session
-from flask_bigapp.security import login_check
+from flask import render_template
+from flask_imp.security import login_check
 
 from app.models.genre import Genre
 from .. import bp
 
 
-@bp.route("/genres", methods=["GET"])
-@login_check('authenticated', 'auth.login')
+@bp.get("/genres")
+@login_check('authenticated', True, 'auth.login')
 def genres():
     q_genres = Genre.read(all_rows=True, order_by="created")
 

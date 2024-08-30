@@ -1,11 +1,19 @@
-from flask_bigapp import Blueprint
+from flask import redirect, url_for
+from flask_imp import ImpBlueprint
+from flask_imp.config import ImpBlueprintConfig
 
-bp = Blueprint(__name__)
+bp = ImpBlueprint(
+    __name__,
+    ImpBlueprintConfig(
+        enabled=True,
+        url_prefix="/auth",
+        template_folder="templates",
+    )
+)
 
-bp.import_routes("routes")
+bp.import_resources()
 
 
-@bp.before_app_request
-def before_app_request():
-    bp.init_session()
-
+@bp.get("/")
+def index():
+    return redirect(url_for('auth.login'))

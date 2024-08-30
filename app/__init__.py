@@ -1,47 +1,29 @@
-from pathlib import Path
+from flask import Flask
 
-from dotenv import load_dotenv
-
-from app.extensions import *
-from app.globals.first_run import first_run
-
-load_dotenv()
+from app.config import flask_config, imp_config
+from app.extensions import imp, db
+from app.first_run import first_run
+from app.models import System
 
 
 def create_app():
-    app = Flask(
-        __name__,
-        static_folder="static",
-        template_folder="templates",
-        static_url_path="/static"
-    )
+    app = Flask(__name__)
+    flask_config.apply_config(app)
 
-    sysconf_location = Path(Path(app.root_path) / "sysconf.ini")
-    sysconf.read(Path(sysconf_location))
+    imp.init_app(app, imp_config)
+    imp.import_app_resources()
 
-    bigapp.init_app(app)
+    imp.import_models("models")
+    imp.import_blueprints("blueprints")
+
     db.init_app(app)
-
-    bigapp.import_builtins()
-    bigapp.import_models(from_folder="models")
-    bigapp.import_blueprints("blueprints")
 
     with app.app_context():
         db.create_all()
-        if sysconf.getboolean("SYSTEM", "FIRST_RUN"):
-            print("First run detected, creating database...")
-            sysconf.set("SYSTEM", "FIRST_RUN", "false")
-            with open(sysconf_location, "w") as f:
-                sysconf.write(f)
 
-            first_run(db, bigapp, auth)
+        system = System.get_system()
 
-    @app.before_request
-    def before_request():
-        bigapp.init_session()
-
-    @app.after_request
-    def after_request(response):
-        return response
+        if system is None:
+            first_run(imp)
 
     return app

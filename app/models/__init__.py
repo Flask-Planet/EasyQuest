@@ -2,10 +2,13 @@ from datetime import datetime
 from datetime import timedelta
 
 from pytz import timezone
-from sqlalchemy import schema, types, select, update, insert, delete, desc, asc
-from sqlalchemy.orm import relationship
 
-from app.extensions import db
+from .__mixins__ import CrudMixin
+from .character import Character
+from .genre import Genre
+from .quest import Quest
+from .user import User
+from .system import System
 
 
 def dater(ltz: str = "Europe/London", mask: str = "%Y-%m-%d %H:%M:%S", days_delta: int = 0) -> datetime:
@@ -19,21 +22,12 @@ def dater(ltz: str = "Europe/London", mask: str = "%Y-%m-%d %H:%M:%S", days_delt
     return datetime.strptime(datetime.now(local_tz).strftime(mask), mask)
 
 
-def forkey(table_dot_field: str) -> schema.Column:
-    return schema.Column(types.Integer, schema.ForeignKey(table_dot_field), nullable=False)
-
-
 __all__ = [
-    "db",
     "dater",
-    "forkey",
-    "schema",
-    "types",
-    "select",
-    "update",
-    "insert",
-    "delete",
-    "relationship",
-    "desc",
-    "asc"
+    "CrudMixin",
+    "Character",
+    "Genre",
+    "Quest",
+    "User",
+    "System",
 ]

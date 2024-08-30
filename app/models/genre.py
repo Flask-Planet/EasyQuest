@@ -1,4 +1,7 @@
-from . import *
+import sqlalchemy as sqla
+from sqlalchemy.orm import relationship
+
+from app.extensions import db
 from .__mixins__ import CrudMixin
 
 
@@ -6,14 +9,14 @@ class Genre(db.Model, CrudMixin):
     id_field = "genre_id"
 
     # PriKey
-    genre_id = schema.Column(types.Integer, primary_key=True)
+    genre_id = sqla.Column(sqla.Integer, primary_key=True)
 
     # Data
-    genre = schema.Column(types.String(256), nullable=False)
-    description = schema.Column(types.String(512), nullable=True)
+    genre = sqla.Column(sqla.String(256), nullable=False)
+    description = sqla.Column(sqla.String(512), nullable=True)
 
     # Tracking
-    created = schema.Column(types.DateTime, default=dater())
+    created = sqla.Column(sqla.DateTime)
 
     # Relationships
     rel_quests = relationship(

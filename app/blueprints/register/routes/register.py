@@ -1,27 +1,26 @@
-import os
-
 from flask import render_template, request, flash, redirect, url_for, session
-from flask_bigapp.security import login_check
+from flask_imp.security import login_check
 
-from app.extensions import auth
-from app.globals.email import send_email
-from app.models.user import User
+from app.config import zepto_settings
+from app.services.zepto import ZeptoEmailService
+from app.models import User
 from .. import bp
 
 
 @bp.get("/")
-@login_check('authenticated', 'www.index', redirect_on_value=True)
+@login_check('authenticated', False, fail_endpoint='www.quests')
 def register():
     return render_template(bp.tmpl("register.html"))
 
 
 @bp.post("/")
-@login_check('authenticated', 'www.index', redirect_on_value=True)
+@login_check('authenticated', False, fail_endpoint='www.quests')
 def register_post():
     first_name = request.form.get('first_name', None)
     email_address = request.form.get('email_address', None)
     password = request.form.get('password', None)
     password_confirm = request.form.get('password_confirm', None)
+
     if password != password_confirm:
         flash('Passwords do not match', 'bad')
         session.get('temp', {}).update({
@@ -36,43 +35,22 @@ def register_post():
         })
         return redirect(url_for('register.register'))
 
-    salt = auth.generate_salt()
-    password = auth.sha_password(password, salt)
-    passport = auth.generate_numeric_validator(6)
+    user = User.add_user(
+        first_name=first_name,
+        email_address=email_address,
+        password=password,
+    )
 
-    user = User.create(values={
-        'first_name': first_name,
-        'email_address': email_address,
-        'password': password,
-        'salt': salt,
-        'passport': passport,
-        'user_type': 1
-    })
-
-    session['user_id'] = user.user_id
-    session['passport'] = user.passport
     session['authenticated'] = True
-    session['user_type'] = user.user_type
-    session['permissions'] = [user.user_type]
+    session['user_id'] = user.user_id
+    session['permission_level'] = user.permission_level
 
-    email_body = f"""
-        <p>Hello,</p>
-        <p>Welcome to EasyQuest. That is all.</p>
-        <p>Thanks,</p>
-        <p>Bye</p>
-        """
+    zepto_service = ZeptoEmailService(zepto_settings)
 
-    send_email(
-        os.environ.get("EMAIL_ACCOUNT"),
-        f"Welcome to EasyQuest",
-        [email_address],
-        email_body,
-        "EasyQuest",
-        os.environ.get("EMAIL_ACCOUNT"),
-        os.environ.get("EMAIL_ACCOUNT"),
-        os.environ.get("EMAIL_PASSWORD"),
-        "smtp-mail.outlook.com",
-        587,
+    zepto_service.send(
+        user.email_address,
+        "Welcome to EasyQuest",
+        render_template(bp.tmpl("email__welcome.html"), user=user),
     )
 
     flash('Registration successful', 'good')

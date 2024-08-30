@@ -1,4 +1,6 @@
-from . import *
+from app.extensions import db
+import sqlalchemy as sqla
+from sqlalchemy.orm import relationship
 from .__mixins__ import CrudMixin
 
 
@@ -6,20 +8,20 @@ class Quest(db.Model, CrudMixin):
     id_field = "quest_id"
 
     # PriKey
-    quest_id = schema.Column(types.Integer, primary_key=True)
+    quest_id = sqla.Column(sqla.Integer, primary_key=True)
 
     # ForKey
-    fk_genre_id = forkey("genre.genre_id")
+    fk_genre_id = sqla.Column(sqla.Integer, sqla.ForeignKey('genre.genre_id'), nullable=False)
 
     # Data
-    title = schema.Column(types.String(256), nullable=False)
-    summary = schema.Column(types.String(4000), default='', nullable=True)
-    live = schema.Column(types.Boolean, default=False)
-    finished = schema.Column(types.Boolean, default=False)
-    arc_cards = schema.Column(types.JSON, default={}, nullable=True)
+    title = sqla.Column(sqla.String(256), nullable=False)
+    summary = sqla.Column(sqla.String(4000), default='', nullable=True)
+    live = sqla.Column(sqla.Boolean, default=False)
+    finished = sqla.Column(sqla.Boolean, default=False)
+    arc_cards = sqla.Column(sqla.JSON, default={}, nullable=True)
 
     # Tracking
-    created = schema.Column(types.DateTime, default=dater())
+    created = sqla.Column(sqla.DateTime)
 
     # Relationships
     rel_genre = relationship(

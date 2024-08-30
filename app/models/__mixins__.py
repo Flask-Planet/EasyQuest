@@ -1,5 +1,6 @@
-from . import db
-from . import insert, update, delete, select, asc, desc
+from sqlalchemy import insert, update, delete, select, asc, desc
+
+from app.extensions import db
 
 
 class CrudMixin:

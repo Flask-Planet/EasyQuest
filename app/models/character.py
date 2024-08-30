@@ -1,4 +1,7 @@
-from . import *
+import sqlalchemy as sqla
+from sqlalchemy.orm import relationship
+
+from app.extensions import db
 from .__mixins__ import CrudMixin
 
 
@@ -6,52 +9,52 @@ class Character(db.Model, CrudMixin):
     id_field = "character_id"
 
     # PriKey
-    character_id = schema.Column(types.Integer, primary_key=True)
+    character_id = sqla.Column(sqla.Integer, primary_key=True)
 
     # ForKey
-    fk_user_id = forkey("user.user_id")
-    fk_quest_id = forkey("quest.quest_id")
+    fk_user_id = sqla.Column(sqla.Integer, sqla.ForeignKey('user.user_id'), nullable=False)
+    fk_quest_id = sqla.Column(sqla.Integer, sqla.ForeignKey('quest.quest_id'), nullable=True)
 
     # Protection
-    locked = schema.Column(types.Boolean, nullable=False, default=False)
-    approved = schema.Column(types.Boolean, nullable=False, default=False)
+    locked = sqla.Column(sqla.Boolean, nullable=False, default=False)
+    approved = sqla.Column(sqla.Boolean, nullable=False, default=False)
 
     # Data
-    full_name = schema.Column(types.String(256), nullable=False)
-    back_story = schema.Column(types.String(4000), nullable=False)
-    display_picture = schema.Column(types.String(256), nullable=True)
+    full_name = sqla.Column(sqla.String(256), nullable=False)
+    back_story = sqla.Column(sqla.String(4000), nullable=False)
+    display_picture = sqla.Column(sqla.String(256), nullable=True)
 
     # Vitals
-    health = schema.Column(types.Integer, nullable=False, default=100)
-    sleeping = schema.Column(types.Boolean, nullable=False, default=False)
-    confused = schema.Column(types.Boolean, nullable=False, default=False)
-    poisoned = schema.Column(types.Boolean, nullable=False, default=False)
-    buffed = schema.Column(types.Boolean, nullable=False, default=False)
+    health = sqla.Column(sqla.Integer, nullable=False, default=100)
+    sleeping = sqla.Column(sqla.Boolean, nullable=False, default=False)
+    confused = sqla.Column(sqla.Boolean, nullable=False, default=False)
+    poisoned = sqla.Column(sqla.Boolean, nullable=False, default=False)
+    buffed = sqla.Column(sqla.Boolean, nullable=False, default=False)
 
     # Arc
-    arc_card = schema.Column(types.JSON, nullable=True)
-    arc = schema.Column(types.String(256), nullable=True)
-    arc_description = schema.Column(types.String(1024), nullable=True)
-    arc_modifier = schema.Column(types.String(256), nullable=True)
-    arc_bonus = schema.Column(types.String(256), nullable=True)
+    arc_card = sqla.Column(sqla.JSON, nullable=True)
+    arc = sqla.Column(sqla.String(256), nullable=True)
+    arc_description = sqla.Column(sqla.String(1024), nullable=True)
+    arc_modifier = sqla.Column(sqla.String(256), nullable=True)
+    arc_bonus = sqla.Column(sqla.String(256), nullable=True)
 
     # Weapon
-    weapon = schema.Column(types.String(256), nullable=True)
+    weapon = sqla.Column(sqla.String(256), nullable=True)
 
     # Attack & Defence
-    attack = schema.Column(types.Integer, nullable=False, default=1)
-    defence = schema.Column(types.Integer, nullable=False, default=1)
+    attack = sqla.Column(sqla.Integer, nullable=False, default=1)
+    defence = sqla.Column(sqla.Integer, nullable=False, default=1)
 
     # Attributes
-    strength = schema.Column(types.Integer, nullable=False, default=1)
-    agility = schema.Column(types.Integer, nullable=False, default=1)
-    intelligence = schema.Column(types.Integer, nullable=False, default=1)
-    luck = schema.Column(types.Integer, nullable=False, default=1)
-    perception = schema.Column(types.Integer, nullable=False, default=1)
-    persuasion = schema.Column(types.Integer, nullable=False, default=1)
+    strength = sqla.Column(sqla.Integer, nullable=False, default=1)
+    agility = sqla.Column(sqla.Integer, nullable=False, default=1)
+    intelligence = sqla.Column(sqla.Integer, nullable=False, default=1)
+    luck = sqla.Column(sqla.Integer, nullable=False, default=1)
+    perception = sqla.Column(sqla.Integer, nullable=False, default=1)
+    persuasion = sqla.Column(sqla.Integer, nullable=False, default=1)
 
     # Tracking
-    created = schema.Column(types.DateTime, default=dater())
+    created = sqla.Column(sqla.DateTime)
 
     # Relationships
     rel_user = relationship(

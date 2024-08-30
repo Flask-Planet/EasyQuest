@@ -3,9 +3,9 @@ WORKDIR /easyquest
 COPY app app
 COPY gunicorn.conf.py gunicorn.conf.py
 COPY easyquest.supervisor.ini easyquest.supervisor.ini
-COPY requirements.txt requirements.txt
+COPY main.txt requirements.txt
 COPY supervisord.conf supervisord.conf
-COPY requirements.txt requirements.txt
+COPY main.txt requirements.txt
 
 RUN mkdir /easyquest/uploads/
 

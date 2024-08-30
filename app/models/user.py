@@ -1,6 +1,11 @@
-from app.extensions import auth
-from flask_bigapp.orm import CrudMixin
-from . import *
+import sqlalchemy as sqla
+from flask_imp.auth import (
+    authenticate_password, generate_salt, encrypt_password, generate_private_key
+)
+from sqlalchemy.orm import relationship
+
+from app.extensions import db
+from .__mixins__ import CrudMixin
 
 
 class User(db.Model, CrudMixin):
@@ -8,23 +13,23 @@ class User(db.Model, CrudMixin):
     __session__ = db.session
 
     # PriKey
-    user_id = schema.Column(types.Integer, primary_key=True)
+    user_id = sqla.Column(sqla.Integer, primary_key=True)
 
     # Data
-    first_name = schema.Column(types.String(128), nullable=True)
-    email_address = schema.Column(types.String(512), nullable=False)
-    password = schema.Column(types.String(512), nullable=False)
-    salt = schema.Column(types.String(4), nullable=False)
-    uuid = schema.Column(types.String(256), nullable=False)
-    disabled = schema.Column(db.Boolean, default=False)
+    first_name = sqla.Column(sqla.String(128), nullable=True)
+    email_address = sqla.Column(sqla.String(512), nullable=False)
+    password = sqla.Column(sqla.String(512), nullable=False)
+    salt = sqla.Column(sqla.String(4), nullable=False)
+    uuid = sqla.Column(sqla.String(256), nullable=False)
+    disabled = sqla.Column(sqla.Boolean, default=False)
 
     # Permissions
     # 10 = admin, 1 = user
-    permission_level = schema.Column(types.Integer, nullable=True)
+    permission_level = sqla.Column(sqla.Integer, nullable=True)
 
     # Tracking
-    created = schema.Column(types.DateTime, default=dater())
-    deleted = schema.Column(types.Boolean, default=False)
+    created = sqla.Column(sqla.DateTime)
+    deleted = sqla.Column(sqla.Boolean, default=False)
 
     # Relationships
     rel_characters = relationship(
@@ -39,7 +44,7 @@ class User(db.Model, CrudMixin):
             return False
         user = cls.read(fields={'email_address': email_address}, _auto_output=False).first()
         if user:
-            if auth.auth_password(password, user.password, user.salt):
+            if authenticate_password(password, user.password, user.salt):
                 return user
         return None
 
@@ -59,14 +64,26 @@ class User(db.Model, CrudMixin):
 
     @classmethod
     def add_user(cls, first_name, email_address, password, permission_level=1):
-        salt = auth.generate_salt()
+        salt = generate_salt()
         return cls.create(
             values={
                 'first_name': first_name,
                 'email_address': email_address,
-                'password': auth.hash_password(password, salt),
+                'password': encrypt_password(password, salt),
                 'salt': salt,
+                'uuid': generate_private_key(email_address),
                 'permission_level': permission_level,
-                'uuid': auth.generate_private_key(email_address)
             }
         )
+
+    @classmethod
+    def reset_password(cls, email_address, password) -> str:
+        salt = generate_salt()
+        cls.update(
+            fields={'email_address': email_address},
+            values={
+                'password': encrypt_password(password, salt),
+                'salt': salt
+            }
+        )
+        return password

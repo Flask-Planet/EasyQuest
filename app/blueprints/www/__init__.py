@@ -1,11 +1,13 @@
-from flask_bigapp import Blueprint
+from flask_imp import ImpBlueprint
+from flask_imp.config import ImpBlueprintConfig
 
-bp = Blueprint(__name__)
+bp = ImpBlueprint(
+    __name__,
+    ImpBlueprintConfig(
+        enabled=True,
+        url_prefix="/",
+        template_folder="templates",
+    )
+)
 
-bp.import_routes("routes")
-
-
-@bp.before_app_request
-def before_app_request():
-    bp.init_session()
-
+bp.import_resources()

@@ -1,0 +1,6 @@
+SECRET_KEY="development"
+ZEPTO_SENDER="-"
+ZEPTO_API_URL="-"
+ZEPTO_TOKEN="-"
+DEFAULT_ADMIN_ACCOUNT="admin@localhost"
+DEFAULT_ADMIN_PASSWORD="password"

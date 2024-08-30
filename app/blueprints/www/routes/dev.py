@@ -1,14 +1,14 @@
 from flask import redirect, url_for
-from flask_bigapp.security import login_check, permission_check
+from flask_imp.security import login_check, permission_check
 
-from app import db
+from app.extensions import db
 from .. import bp
 
 
-@bp.route("/database", methods=["GET"])
+@bp.get("/reset-database")
 @login_check('authenticated', 'auth.login')
-@permission_check('permissions', 'www.index', [10])
-def database():
+@permission_check('permissions', 10, 'www.index')
+def reset_database():
     db.drop_all()
     db.create_all()
     return redirect(url_for("www.index"))

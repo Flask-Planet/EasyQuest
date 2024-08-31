@@ -33,3 +33,9 @@ docker-build-base = "*:docker build -f Dockerfile-base -t easyquest-base ."
 docker-compose = "*:docker compose up -d --build"
 run-debug-stack = "app:flask"
 run-websocket-server = "app:websockets"
+tailwindcss = """*:\
+npx tailwindcss \
+-c ./configs/tailwind.config.js \
+-i ./tailwindcss/_.css \
+-o ./app/flask_/resources/static/css/index.css \
+--watch"""

@@ -12,3 +12,11 @@ class System(db.Model):
     def get_system(cls):
         query = sqla.select(cls)
         return db.session.execute(query).scalar()
+
+    @classmethod
+    def create_system(cls):
+        system = cls()
+        system.created_at = sqla.func.now()
+        db.session.add(system)
+        db.session.commit()
+        return system

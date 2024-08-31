@@ -1,9 +1,10 @@
-from flask import Flask
-
 from app.config import flask_config, imp_config
 from app.extensions import imp, db
 from app.first_run import first_run
 from app.models import System
+from flask import Flask
+
+from sqlalchemy.exc import OperationalError
 
 
 def create_app():
@@ -19,11 +20,14 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        db.create_all()
+        try:
 
-        system = System.get_system()
+            system = System.get_system()
+            if system is None:
+                first_run(imp)
 
-        if system is None:
+        except OperationalError:
+            db.create_all()
             first_run(imp)
 
     return app

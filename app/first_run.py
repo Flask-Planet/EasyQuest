@@ -59,3 +59,5 @@ def first_run(imp):
                 "permission_level": 10,
             }
         )
+
+    imp.model("System").create_system()

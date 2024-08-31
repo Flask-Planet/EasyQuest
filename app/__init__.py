@@ -1,33 +1,18 @@
-from app.config import flask_config, imp_config
-from app.extensions import imp, db
-from app.first_run import first_run
-from app.models import System
-from flask import Flask
+from .flask_ import create_app as forward_create_app
 
-from sqlalchemy.exc import OperationalError
+__all__ = ["create_app"]
 
 
 def create_app():
-    app = Flask(__name__)
-    flask_config.apply_config(app)
+    return forward_create_app()
 
-    imp.init_app(app, imp_config)
-    imp.import_app_resources()
 
-    imp.import_models("models")
-    imp.import_blueprints("blueprints")
+def flask():
+    app = create_app()
+    app.run(debug=True)
 
-    db.init_app(app)
 
-    with app.app_context():
-        try:
-
-            system = System.get_system()
-            if system is None:
-                first_run(imp)
-
-        except OperationalError:
-            db.create_all()
-            first_run(imp)
-
-    return app
+def websockets():
+    import asyncio
+    from app.websockets_.run import run
+    asyncio.run(run())

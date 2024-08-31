@@ -20,7 +20,7 @@ class User(db.Model, CrudMixin):
     email_address = sqla.Column(sqla.String(512), nullable=False)
     password = sqla.Column(sqla.String(512), nullable=False)
     salt = sqla.Column(sqla.String(4), nullable=False)
-    uuid = sqla.Column(sqla.String(256), nullable=False)
+    private_key = sqla.Column(sqla.String(256), nullable=False)
     disabled = sqla.Column(sqla.Boolean, default=False)
 
     # Permissions
@@ -71,7 +71,7 @@ class User(db.Model, CrudMixin):
                 'email_address': email_address,
                 'password': encrypt_password(password, salt),
                 'salt': salt,
-                'uuid': generate_private_key(email_address),
+                'private_key': generate_private_key(email_address),
                 'permission_level': permission_level,
             }
         )

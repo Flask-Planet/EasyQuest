@@ -10,10 +10,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/spacing.css') }}">
     {% block header %}{% endblock %}
+    <script>
+        const WS = '{{ config.get("WS", "http://127.0.0.1:5001") }}';
+    </script>
+    <script defer src="{{ url_for('static', filename='js/alpine_websockets.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/alpine/collapse.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/alpine/alpinejs_3.js') }}"></script>
 </head>
-<body>
+<body x-data="websockets">
 
 {% block global %}
 

@@ -9,6 +9,9 @@ load_dotenv()
 
 flask_config = FlaskConfig(
     secret_key=os.getenv("SECRET_KEY", "development"),
+    additional={
+        "WS": os.getenv("WS_URI", "http://127.0.0.1:5001"),
+    }
 )
 
 imp_config = ImpConfig(

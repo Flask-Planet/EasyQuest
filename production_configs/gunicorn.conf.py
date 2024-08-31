@@ -1,6 +1,6 @@
 from os import environ
 
-bind = "0.0.0.0:5000"
+bind = "127.0.0.1:5000"
 workers = 3
 wsgi_app = "app:create_app()"
 

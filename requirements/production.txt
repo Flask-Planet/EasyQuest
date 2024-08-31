@@ -37,6 +37,8 @@ more-itertools==10.4.0
     # via flask-imp
 packaging==24.1
     # via gunicorn
+pyqwe==1.7.1
+    # via easyquest (pyproject.toml)
 python-dotenv==1.0.1
     # via easyquest (pyproject.toml)
 pytz==2024.1
@@ -53,5 +55,7 @@ typing-extensions==4.12.2
     # via sqlalchemy
 urllib3==2.2.2
     # via requests
+websockets==13.0.1
+    # via easyquest (pyproject.toml)
 werkzeug==3.0.4
     # via flask

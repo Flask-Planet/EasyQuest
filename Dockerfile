@@ -1,7 +1,4 @@
-FROM python:3.11-alpine
-
-# timezone
-ENV TZ=Europe/London
+FROM easyquest-base:latest
 
 # set workdir
 WORKDIR /easyquest
@@ -13,15 +10,7 @@ COPY .env .env
 COPY app app
 COPY production_configs/gunicorn.conf.py gunicorn.conf.py
 COPY production_configs/supervisord.conf supervisord.conf
-COPY requirements/production.txt requirements.txt
-
-# create uploads folder
-RUN mkdir /easyquest/instance
-RUN mkdir /easyquest/instance/uploads
-
-# install requirements
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+COPY production_configs/nginx.config /etc/nginx/http.d/default.conf
 
 # start
 ENTRYPOINT ["supervisord", "-c", "supervisord.conf"]

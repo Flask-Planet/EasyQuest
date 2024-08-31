@@ -41,7 +41,7 @@ def first_run(imp):
     default_admin_password = os.environ.get("DEFAULT_ADMIN_PASSWORD", "password")
 
     salt = generate_salt()
-    uuid = generate_private_key(salt)
+    private_key = generate_private_key(salt)
     password = encrypt_password(default_admin_password, salt)
 
     get_admin = imp.model("User").read(
@@ -55,7 +55,7 @@ def first_run(imp):
                 "email_address": default_admin_email_address,
                 "password": password,
                 "salt": salt,
-                "uuid": uuid,
+                "private_key": private_key,
                 "permission_level": 10,
             }
         )

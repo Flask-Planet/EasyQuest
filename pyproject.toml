@@ -11,6 +11,8 @@ dependencies = [
     "flask-sqlalchemy",
     "python-dotenv",
     "requests",
+    "pyqwe",
+    "websockets",
 ]
 
 [project.optional-dependencies]
@@ -23,3 +25,11 @@ production = [
 line-length = 80
 indent-width = 4
 ignore = ["F403", "F405"]
+
+[tool.pyqwe]
+compile-main = "*:uv pip compile pyproject.toml -o requirements/main.txt"
+compile-production = "*:uv pip compile pyproject.toml --extra production -o requirements/production.txt"
+docker-build-base = "*:docker build -f Dockerfile-base -t easyquest-base ."
+docker-compose = "*:docker compose up -d --build"
+run-debug-stack = "*:flask run --debug"
+run-websocket-server = "*:python3 app/ws"

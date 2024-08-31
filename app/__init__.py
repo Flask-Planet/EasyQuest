@@ -8,8 +8,8 @@ def create_app():
 
 
 def flask():
-    app = create_app()
-    app.run(debug=True)
+    from app.flask_ import create_app
+    create_app().run(debug=True)
 
 
 def websockets():

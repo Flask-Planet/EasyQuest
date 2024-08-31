@@ -1,0 +1,174 @@
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="time"],
+input[type="search"],
+input[type="range"] {
+    @apply block px-3 py-2 border text-black
+    rounded-md shadow-sm appearance-none;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    height: 100%;
+    max-height: 42px;
+}
+
+select:hover,
+input[type="text"]:hover,
+input[type="password"]:hover,
+input[type="email"]:hover,
+input[type="url"]:hover,
+input[type="tel"]:hover,
+input[type="number"]:hover,
+input[type="date"]:hover,
+input[type="datetime-local"]:hover,
+input[type="month"]:hover,
+input[type="week"]:hover,
+input[type="time"]:hover,
+input[type="search"]:hover,
+input[type="range"]:hover,
+input[type="color"]:hover {
+    border-color: var(--input-border-hover);
+}
+
+select:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+input[type="month"]:focus,
+input[type="week"]:focus,
+input[type="time"]:focus,
+input[type="search"]:focus,
+input[type="range"]:focus,
+input[type="file"]:focus,
+input[type="color"]:focus {
+    border-color: var(--input-border-focus);
+    outline: none;
+}
+
+select:disabled,
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="email"]:disabled,
+input[type="url"]:disabled,
+input[type="tel"]:disabled,
+input[type="number"]:disabled,
+input[type="date"]:disabled,
+input[type="datetime-local"]:disabled,
+input[type="month"]:disabled,
+input[type="week"]:disabled,
+input[type="time"]:disabled,
+input[type="search"]:disabled,
+input[type="range"]:disabled,
+input[type="file"]:disabled,
+input[type="color"]:disabled {
+    @apply cursor-not-allowed opacity-40;
+}
+
+input[type="text"]:read-only,
+input[type="password"]:read-only,
+input[type="email"]:read-only,
+input[type="url"]:read-only,
+input[type="tel"]:read-only,
+input[type="number"]:read-only,
+input[type="date"]:read-only,
+input[type="datetime-local"]:read-only,
+input[type="month"]:read-only,
+input[type="week"]:read-only,
+input[type="time"]:read-only,
+input[type="search"]:read-only,
+input[type="range"]:read-only,
+input[type="file"]:read-only,
+input[type="color"]:read-only {
+    background-color: var(--input-bg-read-only);
+}
+
+input::placeholder {
+  color: var(--input-placeholder-text);
+}
+
+
+input[type="file"] {
+    @apply block border cursor-pointer
+    rounded-md shadow-sm appearance-none;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    height: 100%;
+    max-height: 42px;
+}
+
+input[type="file"]::file-selector-button {
+    @apply text-sm text-center
+    inline-block py-2 px-4
+    rounded-tl rounded-tr-none
+    rounded-bl rounded-br-none
+    cursor-pointer;
+    margin-right: 1rem;
+    background-color: var(--button-confirm-bg);
+    color: var(--button-confirm-text);
+    border: 1px solid var(--button-confirm-border);
+    height: 100%;
+    max-height: 42px;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--button-confirm-bg-hover);
+    color: var(--button-confirm-text-hover);
+}
+
+input[type="color"] {
+    @apply block px-3 py-2 border cursor-pointer
+    rounded-md shadow-sm appearance-none;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    height: 100%;
+    max-height: 42px;
+}
+
+input[type="range"] {
+    @apply cursor-pointer;
+    height: 100%;
+    max-height: 42px;
+    accent-color: var(--input-range-accent);
+}
+
+
+/* INPUTS // */
+
+
+textarea {
+    @apply block px-3 py-2 border
+    rounded-md shadow-sm appearance-none;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+}
+
+textarea:focus {
+    border-color: var(--input-border-focus);
+    outline: none;
+}
+
+
+/* REQUIRED */
+
+input[required], textarea[required], select[required] {
+    @apply border;
+    border-color: var(--input-required-b);
+}
+
+input[required]:hover, textarea[required]:hover, select[required]:hover {
+    @apply border;
+    border-color: var(--input-required-b);
+}

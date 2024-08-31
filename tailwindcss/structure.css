@@ -1,3 +1,49 @@
 body {
+    background-color: var(--body-bg-color);
+    color: var(--default-text-color);
     font-family: 'Inter var', sans-serif;
 }
+
+/* MENU */
+
+.main-menu {
+    @apply flex justify-between w-full p-3 shadow-md;
+    background-color: var(--main-menu-bg);
+}
+
+.main-menu ul {
+    @apply flex items-center gap-2;
+}
+
+.main-menu ul li {
+}
+
+.main-menu ul li a {
+    @apply flex items-center justify-center rounded-lg py-2 px-4;
+    background-color: var(--main-menu-icon-bg);
+    color: var(--main-menu-icon-text);
+    border: 1px solid var(--main-menu-icon-border);
+}
+
+.main-menu ul li a:hover {
+    background-color: var(--main-menu-icon-bg-hover);
+    color: var(--main-menu-icon-text-hover);
+    border-color: var(--main-menu-icon-border-hover);
+}
+
+/* MENU */
+
+/* AUTH-BOX */
+
+.auth-box {
+    @apply rounded-md mx-auto w-full m-6;
+    max-width: 600px;
+    background-color: var(--auth-box-bg);
+}
+
+.auth-box form {
+    @apply flex flex-col gap-4 p-8;
+}
+
+/* AUTH-BOX */
+

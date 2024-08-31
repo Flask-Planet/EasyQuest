@@ -3,10 +3,14 @@
 
 
 {% block container %}
-    <div class="character-box-flat">
-        <form class="form inputs-100" action="{{ url_for('auth.login_post') }}" method="post">
+    <div class="auth-box">
+        <form action="{{ url_for('auth.login_post') }}" method="post">
             <label for="email_address">Email Address</label>
-            <input type="email" id="email_address" name="email_address" value="" placeholder="your@email.address"
+            <input type="email"
+                   id="email_address"
+                   name="email_address"
+                   value=""
+                   placeholder="your@email.address"
                    required>
             <label for="password">Password</label>
             <input type="password" id="password" name="password" value="" placeholder="***********" required>

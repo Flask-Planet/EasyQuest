@@ -1,6 +1,6 @@
 # EasyQuest
 
-Quest based system inspired by Pathfinder and DnD.
+Create adventures for you and your friends!
 
 ### Attribution
 

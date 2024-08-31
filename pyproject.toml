@@ -1,9 +1,22 @@
+[project]
+name = "EasyQuest"
+version = "1.0.0"
+description = "Create adventures for you and your friends!"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pytz",
+    "flask",
+    "flask-imp",
+    "flask-sqlalchemy",
+    "python-dotenv",
+    "requests",
+]
 
-
-[tool.black]
-line-length = 88
-target-version = ['py38']
-include = '\.pyi?$'
+[project.optional-dependencies]
+production = [
+    "gunicorn",
+]
 
 [tool.ruff]
 line-length = 80

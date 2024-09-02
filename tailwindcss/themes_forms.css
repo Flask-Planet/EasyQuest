@@ -1,0 +1,15 @@
+[data-theme='dark'] {
+
+    --input-placeholder-text: rgba(46, 46, 46, 0.4);
+    --input-bg: rgba(253, 250, 246, 0.6);
+    --input-color: #2e2e2e;
+    --input-b: #34495e;
+    --input-b-hover: #2c3e50;
+    --input-b-focus: #2c3e50;
+    --input-bg-read-only: #34495e;
+
+    --input-range-accent: #3498db;
+
+    --input-required-b: #af1b1b;
+
+}

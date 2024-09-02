@@ -14,7 +14,8 @@
                    required>
             <label for="password">Password</label>
             <input type="password" id="password" name="password" value="" placeholder="***********" required>
-            <button type="submit">Login</button>
+            <button type="submit" class="btn mb-1">Login</button>
+            <a href="{{ url_for('auth.register') }}" role="button" class="btn fait">Register</a>
         </form>
     </div>
 {% endblock %}

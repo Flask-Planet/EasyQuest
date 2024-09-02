@@ -1,0 +1,8 @@
+ul {
+    @apply list-disc list-inside ml-2;
+}
+
+blockquote {
+    @apply border-l-4 border-gray-300 p-4 my-2;
+    background-color: var(--body-bg-color);
+}

@@ -32,7 +32,7 @@ compile-production = "*:uv pip compile pyproject.toml --extra production -o requ
 docker-build-base = "*:docker build -f Dockerfile-base -t easyquest-base ."
 docker-compose = "*:docker compose up -d --build"
 flask = "*:flask run --debug"
-websockets = "app:websockets"
+websockets = "*:python3 -m app.websockets_"
 tailwindcss = """*:\
 npx tailwindcss \
 -c ./configs/tailwind.config.js \

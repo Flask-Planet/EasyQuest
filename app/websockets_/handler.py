@@ -1,116 +1,111 @@
 import json
 
 import websockets
+
 from app.websockets_ import CONNECTIONS, CONNECTION_LOOKUP, AUTHENTICATED
+from .actions import disconnect_user_id, send_to_user_id
 from .authenticate import authenticate
 from .broadcast import broadcast
-from .close_wsid_connection import close_wsid_connection
+
+"""
+Inbound message format:
+
+{
+    'user_id': int, <- inbound user_id
+    'token': str, <- inbound token (skipped if system)
+    'action': str, <- action to take
+    'data': {} <- data to process
+}
+
+An example of the system sending a message to a user:
+
+{
+    'user_id': 1,
+    'token': None,
+    'action': 'send_to_user_id',
+    'data': {
+        'to_user_id': 2,
+        'payload': {
+            'from_user_id': 1,
+            'action': 'run_function',
+            'function': 'refreshInventory',
+        }
+    }
+}
+
+"""
 
 
-async def handler(websocket):
-    if websocket not in CONNECTIONS:
-        CONNECTIONS.add(websocket)
-        print(f"Connection established: {websocket.remote_address[0]} - {websocket}")
+async def handler(connection):
+    if connection not in CONNECTIONS:
+        CONNECTIONS.add(connection)
+        print(f"Connection established: {connection.remote_address[0]} - {connection}")
+
+        print(connection.path)
 
     try:
-        inbound = await websocket.recv()
 
-        this_wsid = [k for k, v in CONNECTION_LOOKUP.items() if v == websocket]
+        inbound = await connection.recv()
 
         # parse inbound message
         payload = json.loads(inbound)
+
         # split payload
+        user_id = payload.get("user_id")
         token = payload.get("token")
-        action = payload.get("action")
+        action = payload.get("action", "disconnect")
         data = payload.get("data")
+
+        if connection.path == "/--ws--/system":
+            if connection.remote_address[0] in ["127.0.0.1", "::1"]:
+                AUTHENTICATED.add(connection)
 
         # disconnect
         if action == "disconnect":
-            await websocket.close()
-
-        if websocket.path == "/system":
-            if websocket.remote_address[0] == "127.0.0.1":
-                AUTHENTICATED.add(websocket)
-
-        # Connection is already authenticated
-        if websocket in AUTHENTICATED:
-            print("Authenticated connection")
-
-            if action == "disconnect":
-                to_wsid = data.get("to_wsid")
-                if to_wsid in CONNECTION_LOOKUP:
-                    await CONNECTION_LOOKUP[to_wsid].send(
-                        json.dumps({
-                            "action": "disconnect",
-                            "data": None,
-                        }))
-                    await close_wsid_connection(to_wsid)
-
-            # broadcast to all connected clients
-            if action == "broadcast":
-                await broadcast(websocket, handler, data)
-
-            if action == "direct_message":
-                to_wsid = data.get("to_wsid")
-                if to_wsid in CONNECTION_LOOKUP:
-                    await CONNECTION_LOOKUP[to_wsid].send(
-                        json.dumps(
-                            {
-                                "action": "direct_message",
-                                "data": {
-                                    "from_wsid": this_wsid[0]
-                                    if this_wsid
-                                    else "server"
-                                    if websocket.remote_address[0] == "::1"
-                                    else "unknown",
-                                    "message": data.get("message"),
-                                },
-                            }
-                        )
-                    )
-
-            if action == "alert":
-                to_wsid = data.get("to_wsid")
-                if to_wsid in CONNECTION_LOOKUP:
-                    await CONNECTION_LOOKUP[to_wsid].send(
-                        json.dumps(
-                            {
-                                "action": "alert",
-                                "data": {
-                                    "from_wsid": this_wsid[0]
-                                    if this_wsid
-                                    else "server"
-                                    if websocket.remote_address[0] == "::1"
-                                    else "unknown",
-                                    "message": data.get("message"),
-                                },
-                            }
-                        )
-                    )
-
-            return handler(websocket)
+            await connection.close()
 
         # authenticate connection
         if action == "authenticate":
-            await authenticate(websocket, handler, token, data.get("wsid"))
+            await authenticate(connection, handler, token, user_id)
 
-        await websocket.close()
+        # Connection is already authenticated
+        if connection in AUTHENTICATED:
+
+            # disconnect user_id
+            if action == "disconnect_user_id":
+                await disconnect_user_id(data)
+
+            # broadcast to all connected clients
+            if action == "broadcast":
+                await broadcast(connection, handler, data)
+
+            # send to user_id
+            if action == "send_to_user_id":
+                await send_to_user_id(data)
+
+            return handler(connection)
+
+        await connection.close()
 
     except websockets.exceptions.ConnectionClosedError:
-        print(f"Connection closed: {websocket}")
+        print(f"Connection closed: {connection}")
         pass
 
     except websockets.exceptions.ConnectionClosedOK:
-        print(f"Connection closed: {websocket}")
+        print(f"Connection closed: {connection}")
         pass
 
-    finally:
-        if websocket in CONNECTIONS:
-            CONNECTIONS.remove(websocket)
-        if websocket in AUTHENTICATED:
-            AUTHENTICATED.remove(websocket)
+    except json.JSONDecodeError:
+        print(f"Invalid JSON: {connection}")
+        await connection.close()
 
-        # remove wsid from lookup
-        this_wsid = [k for k, v in CONNECTION_LOOKUP.items() if v == websocket]
-        if this_wsid:
-            del CONNECTION_LOOKUP[this_wsid[0]]
+    finally:
+        if connection in CONNECTIONS:
+            CONNECTIONS.remove(connection)
+        if connection in AUTHENTICATED:
+            AUTHENTICATED.remove(connection)
+
+        # remove user_id from lookup
+        this_user_id = [k for k, v in CONNECTION_LOOKUP.items() if v == connection]
+        if this_user_id:
+            del CONNECTION_LOOKUP[this_user_id[0]]

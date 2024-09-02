@@ -45,9 +45,8 @@
                 <p>All actions will be decided with the roll of the six sided dice. </p>
                 <p>Each Arc has its own stats that will dictate the roll you need.</p>
                 <p><strong>Causing damage:</strong> In order to cause damage to an enemy you need to roll more than the
-                    enemy's defence points. For example, if an enemy's defence is 2;
-                    You will need to roll a 3 or above to cause damage. This damage would be your attack points.
-                    1 Attack point = 10hp.</p>
+                    enemy's defence points. For example, if an enemy's defence is 3;
+                    You will need to roll a 3 or above to cause damage.</p>
 
                 <p><strong>Scenario checks:</strong> During the quest you will come up against
                     various challenges and scenarios. This is where your attributes will be checked. Attributes work
@@ -55,11 +54,7 @@
                     would need a 5 or above to successfully perform the act of Strength you are attempting.</p>
                 <p>Checks will be made using common sense by the Quest Master.</p>
 
-                <p><strong>The rules of effects</strong></p>
-                <p>Poisoned: This will last until the encounter is over.</p>
-                <p>Sleeping: This will last until you are hit.</p>
-                <p>Confused: This will last 2 turns.</p>
-                <p>Buffed: This will last until the encounter is over.</p>
+
             </div>
         </div>
 
@@ -114,12 +109,6 @@
                     <img class="char-icon" src="{{ url_for('static', filename='icons/health.svg') }}"
                          alt="Health">
                     <p><strong x-text="health"></strong> / <strong>{{ character.arc_card.get('health') }}</strong></p>
-                </div>
-                <div class="char-stat">
-                    <p>Attack</p>
-                    <img class="char-icon" src="{{ url_for('static', filename='icons/attack.svg') }}"
-                         alt="Attack">
-                    <p><strong x-text="attack"></strong></p>
                 </div>
                 <div class="char-stat">
                     <p>Defence</p>

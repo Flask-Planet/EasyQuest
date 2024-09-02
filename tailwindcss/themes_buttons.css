@@ -1,0 +1,39 @@
+[data-theme='dark'] {
+
+    --button-bg: #172a3c;
+    --button-b: #223e59;
+    --button-text: #ffffff;
+    --button-bg-hover: #1a3045;
+    --button-text-hover: #ffffff;
+
+    --button-fait-bg: rgba(23, 42, 60, 0.8);
+    --button-fait-b: rgba(23, 42, 60, 1);
+    --button-fait-text: #ffffff;
+    --button-fait-bg-hover: rgba(23, 42, 60, 1);
+    --button-fait-text-hover: #ffffff;
+
+    --button-confirm-bg: rgba(22, 76, 15, 0.7);
+    --button-confirm-b: #195511;
+    --button-confirm-text: #ffffff;
+    --button-confirm-bg-hover: #195511;
+    --button-confirm-text-hover: #ffffff;
+
+    --button-update-bg: rgba(15, 29, 76, 0.6);
+    --button-update-b: #223778;
+    --button-update-text: #ffffff;
+    --button-update-bg-hover: #223778;
+    --button-update-text-hover: #ffffff;
+
+    --button-danger-bg: rgba(117, 38, 38, 0.6);
+    --button-danger-border-color: #7c2f2f;
+    --button-danger-text-color: #ffffff;
+    --button-danger-bg-hover: #7c2f2f;
+    --button-danger-text-color-hover: #ffffff;
+
+    --button-warning-bg: rgba(117, 95, 38, 0.6);
+    --button-warning-border-color : #7c5f2f;
+    --button-warning-text-color: #ffffff;
+    --button-warning-bg-hover: #7c5f2f;
+    --button-warning-text-color-hover: #ffffff;
+
+}

@@ -1,0 +1,48 @@
+{% extends "extends/main.html" %}
+{% block title %}Add Quest{% endblock %}
+
+
+{% block container %}
+    <section>
+
+
+        <form action="{{ url_for('www.quest.add') }}"
+              method="post"
+              class="form-box"
+              x-data="{genre: 0, show_delete: false}">
+
+            <div class="flex flex-row justify-between gap-2 mb-6">
+                <a href="{{ url_for('www.quests') }}" role="button" class="btn fait">
+                    Cancel
+                </a>
+                <button type="submit" class="btn confirm">Save Quest</button>
+            </div>
+
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="" required>
+
+            <label for="fk_genre_id">Genre</label>
+            <select name="fk_genre_id" id="fk_genre_id" x-model="genre" required>
+                <option value="0">Select...</option>
+                {% for genre in q_genres %}
+                    <option value="{{ genre.genre_id }}">
+                        {{ genre.genre }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <div class="inner-option-box mb-4">
+                <small x-show="genre === 0" x-cloak>
+                    Select a quest genre...</small>
+                {% for genre in q_genres %}
+                    <small x-show="genre === '{{ genre.genre_id }}'" x-cloak>
+                        {{ genre.description }}</small>
+                {% endfor %}
+            </div>
+
+            <label for="summary">Summary</label>
+            <textarea name="summary" id="summary" cols="30" rows="5"></textarea>
+
+        </form>
+    </section>
+{% endblock %}

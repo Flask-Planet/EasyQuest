@@ -1,0 +1,278 @@
+{% extends "extends/main.html" %}
+{% block title %}Add Quest{% endblock %}
+
+
+{% block alpinejs_page_data %}
+    <script>
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('edit_arc_card', () => ({
+
+                defence: {{ q_arc_card.defence }},
+
+                strength: {{ q_arc_card.strength }},
+                agility: {{ q_arc_card.agility }},
+                intelligence: {{ q_arc_card.intelligence }},
+                luck: {{ q_arc_card.luck }},
+                perception: {{ q_arc_card.perception }},
+                persuasion: {{ q_arc_card.persuasion }},
+
+            }))
+        })
+
+
+    </script>
+{% endblock %}
+
+
+{% block container %}
+    <section x-data="edit_arc_card">
+
+        <form action="{{ url_for(
+        'www.quest.edit_arc_card',
+        quest_id=q_quest.quest_id,
+        arc_card_id=q_arc_card.arc_card_id
+        ) }}"
+              method="post"
+              class="form-box">
+
+            <input type="hidden" name="defence" x-model="defence">
+            <input type="hidden" name="strength" x-model="strength">
+            <input type="hidden" name="agility" x-model="agility">
+            <input type="hidden" name="intelligence" x-model="intelligence">
+            <input type="hidden" name="luck" x-model="luck">
+            <input type="hidden" name="perception" x-model="perception">
+            <input type="hidden" name="persuasion" x-model="persuasion">
+
+            <div class="flex flex-row justify-start gap-2 mb-6">
+                <a href="{{ url_for('www.quest.edit', quest_id=q_quest.quest_id) }}" role="button" class="btn fait">
+                    Cancel
+                </a>
+                <button type="submit" class="btn confirm">Save Arc Card</button>
+            </div>
+
+            <label for="arc">Arc</label>
+            <input type="text"
+                   name="arc"
+                   id="arc"
+                   value="{{ q_arc_card.arc }}"
+                   required>
+
+            <label for="description">Description</label>
+            <textarea name="description"
+                      id="description"
+                      rows="3"
+                      class="w-full"
+                      required>{{ q_arc_card.description }}</textarea>
+
+            <label for="modifier">Modifier</label>
+            <textarea name="modifier"
+                      id="modifier"
+                      rows="2"
+                      class="w-full">{{ q_arc_card.modifier }}</textarea>
+
+
+            <label for="bonus">Bonus</label>
+            <textarea name="bonus"
+                      id="bonus"
+                      rows="2"
+                      class="w-full">{{ q_arc_card.bonus }}</textarea>
+
+
+            <label>Combat</label>
+
+            <div class="inner-option-box-stripped p-4 mb-4">
+
+                <div class="py-2 flex flex-col">
+                    <label for="health">Health</label>
+                    <input type="number"
+                           name="health"
+                           id="health"
+                           value="{{ q_arc_card.health }}"
+                           class="flex-1">
+                </div>
+
+                <div class="py-2 flex flex-col">
+                    <label>Defence</label>
+                    <small class="pb-2">Enemy must roll a
+                        <span x-text="parseInt(defence) + 1"></span>
+                        <span x-text="parseInt(defence) + 1 === 6 ? 'to hit' : 'or above to hit'"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center mb-2">
+                        <div class="pill-lg" x-text="defence"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {defence !== 1 ? defence -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {defence !== 5 ? defence += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <label>Starting Weapon</label>
+
+            <div class="inner-option-box-stripped p-4 mb-4">
+
+                <div class="py-2 flex flex-col">
+                    <label for="starting_weapon_name">Name</label>
+                    <input type="text"
+                           name="starting_weapon_name"
+                           id="starting_weapon_name"
+                           value="{{ q_arc_card.starting_weapon_name }}"
+                           required>
+                </div>
+
+                <div class="py-2 flex flex-col">
+                    <label for="starting_weapon_damage">Damage</label>
+                    <input type="number"
+                           name="starting_weapon_damage"
+                           id="starting_weapon_damage"
+                           value="{{ q_arc_card.starting_weapon_damage }}"
+                           required>
+                </div>
+            </div>
+
+            <label>Stats</label>
+
+            <div class="arc-card-stats">
+
+                <div class="py-2 flex flex-col">
+                    <label>Strength</label>
+                    <small class="pb-2">
+                        <span x-text="6 - strength + 1 === 7 ? 'Will always fail' : `Roll a ${6 - strength + 1} or above to pass`"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center p-2">
+                        <div class="pill-lg" x-text="strength"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {strength !== 0 ? strength -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {strength !== 5 ? strength += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-2 flex flex-col">
+                    <label>Agility</label>
+                    <small class="pb-2">
+                        <span x-text="6 - agility + 1 === 7 ? 'Will always fail' : `Roll a ${6 - agility + 1} or above to pass`"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center p-2">
+                        <div class="pill-lg" x-text="agility"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {agility !== 0 ? agility -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {agility !== 5 ? agility += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-2 flex flex-col">
+                    <label>Intelligence</label>
+                    <small class="pb-2">
+                        <span x-text="6 - intelligence + 1 === 7 ? 'Will always fail' : `Roll a ${6 - intelligence + 1} or above to pass`"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center p-2">
+                        <div class="pill-lg" x-text="intelligence"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {intelligence !== 0 ? intelligence -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {intelligence !== 5 ? intelligence += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-2 flex flex-col">
+                    <label>Luck</label>
+                    <small class="pb-2">
+                        <span x-text="6 - luck + 1 === 7 ? 'Will always fail' : `Roll a ${6 - luck + 1} or above to pass`"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center p-2">
+                        <div class="pill-lg" x-text="luck"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {luck !== 1 ? luck -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {luck !== 5 ? luck += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-2 flex flex-col">
+                    <label>Perception</label>
+                    <small class="pb-2">
+                        <span x-text="6 - perception + 1 === 7 ? 'Will always fail' : `Roll a ${6 - perception + 1} or above to pass`"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center p-2">
+                        <div class="pill-lg" x-text="perception"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {perception !== 0 ? perception -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {perception !== 5 ? perception += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-2 flex flex-col">
+                    <label>Persuasion</label>
+                    <small class="pb-2">
+                        <span x-text="6 - persuasion + 1 === 7 ? 'Will always fail' : `Roll a ${6 - persuasion + 1} or above to pass`"></span>
+                    </small>
+                    <div class="flex justify-start gap-4 items-center p-2">
+                        <div class="pill-lg" x-text="persuasion"></div>
+                        <div>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {persuasion !== 0 ? persuasion -= 1 : null}"
+                            >-
+                            </button>
+                            <button class="btn"
+                                    type="button"
+                                    @click="() => {persuasion !== 5 ? persuasion += 1 : null}"
+                            >+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </section>
+{% endblock %}

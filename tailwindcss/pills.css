@@ -1,0 +1,20 @@
+
+.pill {
+    @apply inline-flex justify-center px-3 py-1 rounded-full font-semibold;
+    background-color: var(--pill-bg);
+    color: var(--pill-text);
+}
+
+.pill-lg {
+    @apply inline-flex justify-center px-4 py-1 rounded-full font-semibold text-3xl;
+    background-color: var(--pill-bg);
+    color: var(--pill-text);
+}
+
+.pill-defence {
+    background-color: var(--pill-defence-bg);
+}
+
+.pill-attack {
+    background-color: var(--pill-attack-bg);
+}

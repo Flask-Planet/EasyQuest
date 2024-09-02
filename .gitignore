@@ -21,3 +21,4 @@ venv.bak/
 /uv.lock
 /package-lock.json
 /node_modules/
+/.production_env

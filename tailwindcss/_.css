@@ -1,4 +1,13 @@
 @import "_base.css";
-@import "themes.css";
+@import "themes_structure.css";
+@import "themes_forms.css";
+@import "themes_buttons.css";
+@import "themes_pills.css";
+@import "themes_tabs.css";
 @import "structure.css";
 @import "form.css";
+@import "buttons.css";
+@import "pills.css";
+@import "game_elements.css";
+@import "typography.css";
+@import "tabs.css";

@@ -7,13 +7,13 @@ from app.flask_.models import User
 from .. import bp
 
 
-@bp.get("/")
+@bp.get("/register")
 @login_check('authenticated', False, fail_endpoint='www.quests')
 def register():
     return render_template(bp.tmpl("register.html"))
 
 
-@bp.post("/")
+@bp.post("/register")
 @login_check('authenticated', False, fail_endpoint='www.quests')
 def register_post():
     first_name = request.form.get('first_name', None)

@@ -13,7 +13,7 @@
     <script defer src="{{ url_for('static', filename='js/alpine/collapse.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/alpine/alpinejs_3.js') }}"></script>
 </head>
-<body data-theme='dark'>
+<body data-theme='dark' {% block body_attr %}{% endblock %}>
 
 {% block global %}
 
@@ -25,5 +25,9 @@
 
 {% endblock %}
 
+{% include "includes/footer.html" %}
+
+{% block alpinejs_page_data %}
+{% endblock %}
 </body>
 </html>

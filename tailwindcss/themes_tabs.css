@@ -1,0 +1,8 @@
+[data-theme='dark'] {
+
+    --tab-bg: #2a4a6a;
+    --tab-bg-active: #365e85;
+    --tab-bg-hover: #365e85;
+    --tab-text: #ffffff;
+
+}

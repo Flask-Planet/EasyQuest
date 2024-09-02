@@ -1,0 +1,101 @@
+.btn {
+    @apply rounded-md text-sm justify-center
+    inline-flex gap-1 py-2 px-4
+    cursor-pointer capitalize shadow items-center
+    select-none;
+    height: 42px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-b);
+}
+
+.btn-a {
+    @apply rounded-md text-sm justify-center
+    inline-flex gap-1 py-2 px-4 no-underline
+    cursor-pointer capitalize shadow items-center
+    select-none;
+    height: 42px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-b);
+}
+
+.btn:hover, .a-btn:hover {
+    background-color: var(--button-bg-hover);
+    color: var(--button-text-hover);
+}
+
+.btn:disabled {
+    @apply cursor-not-allowed opacity-60;
+}
+
+.btn.fait {
+    background-color: var(--button-fait-bg);
+    color: var(--button-fait-text);
+    border: 1px solid var(--button-fait-b);
+}
+
+.btn.fait:hover {
+    background-color: var(--button-fait-bg-hover);
+    color: var(--button-fait-text-hover);
+}
+
+.btn.confirm {
+    background-color: var(--button-confirm-bg);
+    color: var(--button-confirm-text);
+    border: 1px solid var(--button-confirm-b);
+}
+
+.btn.confirm:hover {
+    background-color: var(--button-confirm-bg-hover);
+    color: var(--button-confirm-text-hover);
+}
+
+.btn.confirm:disabled {
+    @apply cursor-not-allowed opacity-60;
+}
+
+.btn.update {
+    background-color: var(--button-update-bg);
+    color: var(--button-update-text);
+    border: 1px solid var(--button-update-b);
+}
+
+.btn.update:hover {
+    background-color: var(--button-update-bg-hover);
+    color: var(--button-update-text-hover);
+}
+
+.btn.update:disabled {
+    @apply cursor-not-allowed opacity-60;
+}
+
+.btn.danger {
+    background-color: var(--button-danger-bg);
+    color: var(--button-danger-text-color);
+    border: 1px solid var(--button-danger-border-color);
+}
+
+.btn.danger:hover {
+    background-color: var(--button-danger-bg-hover);
+    color: var(--button-danger-text-color-hover);
+}
+
+.btn.danger:disabled {
+    @apply cursor-not-allowed opacity-60;
+}
+
+.btn.warning {
+    background-color: var(--button-warning-bg);
+    color: var(--button-warning-text-color);
+    border: 1px solid var(--button-warning-border-color);
+}
+
+.btn.warning:hover {
+    background-color: var(--button-warning-bg-hover);
+    color: var(--button-warning-text-color-hover);
+}
+
+.btn.warning:disabled {
+    @apply cursor-not-allowed opacity-60;
+}

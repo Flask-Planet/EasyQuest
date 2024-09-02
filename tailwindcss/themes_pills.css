@@ -1,0 +1,10 @@
+[data-theme='dark'] {
+
+    --pill-bg: #2a4a6a;
+    --pill-b: #223e59;
+    --pill-text: #ffffff;
+
+    --pill-defence-bg: #595959;
+    --pill-attack-bg: #704040;
+
+}

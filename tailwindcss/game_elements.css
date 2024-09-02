@@ -1,0 +1,64 @@
+
+.character-stat-icon {
+    @apply w-6;
+}
+
+.character-health {
+    @apply flex w-full rounded-md justify-start border;
+    height: 20px;
+}
+
+.character-health > div {
+    @apply w-full h-full rounded-md;
+}
+
+.character-health .high {
+    @apply bg-green-500 ;
+}
+
+.character-health .medium {
+    @apply bg-yellow-500;
+}
+
+.character-health .low {
+    @apply bg-red-500;
+}
+
+.character-stat {
+    @apply flex justify-between items-center mt-2;
+}
+
+.character-stat div {
+    @apply flex items-center gap-2;
+}
+
+.arc-card-stats {
+    @apply grid grid-cols-1 gap-6 inner-option-box-stripped mb-4;
+}
+
+@media (min-width: 600px) {
+    .arc-card-stats {
+        @apply grid-cols-2;
+    }
+}
+
+@media (min-width: 800px) {
+    .arc-card-stats {
+        @apply grid-cols-3;
+    }
+}
+
+@media (min-width: 1000px) {
+    .arc-card-stats {
+        @apply grid-cols-4;
+    }
+}
+
+@media (min-width: 1400px) {
+    .arc-card-stats {
+        @apply grid-cols-6;
+    }
+}
+
+
+

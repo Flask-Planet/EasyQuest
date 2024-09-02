@@ -4,7 +4,7 @@ FROM easyquest-base:latest
 WORKDIR /easyquest
 
 # environment variables
-COPY .env .env
+COPY .production_env .env
 
 # copy files
 COPY app app

@@ -17,7 +17,7 @@
                 <a x-cloak
                    x-show="show_delete"
                    @click.outside="show_delete = false"
-                   href="{{ url_for('www.delete_quest', quest_id=q_quest.quest_id) }}">
+                   href="{{ url_for('www.quest.delete', quest_id=q_quest.quest_id) }}">
                     <button type="button" class="bg-red">Confirm Delete</button>
                 </a>
             </div>

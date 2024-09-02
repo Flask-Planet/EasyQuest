@@ -1,0 +1,27 @@
+[data-theme='dark'] {
+
+    --body-bg-color: #20232b;
+    --body-bg-color-faint: rgba(32, 35, 43, 0.4);
+    --body-text-color: rgba(255, 255, 255, 0.8);
+    --dialog-bg-color: #344a60;
+    --dialog-b-color: #3d5670;
+    --dialog-color: #ecf0f1;
+
+    /* MENU */
+    --main-menu-bg: #202b38;
+    --main-menu-b: #274159;
+
+    --main-menu-icon-bg: #2c3e50;
+    --main-menu-icon-text: #ecf0f1;
+    --main-menu-icon-border: rgba(255, 255, 255, 0);
+    --main-menu-icon-bg-hover: #34495e;
+    --main-menu-icon-text-hover: #ecf0f1;
+    --main-menu-icon-border-hover: rgba(0, 50, 67, 0.3);
+
+    --option-box-bg: #253140;
+    --option-box-bg-faint: rgba(44, 62, 80, 0.2);
+    --option-box-b: #34495e;
+
+    --option-box-min-bg: rgba(255, 255, 255, 0.02);
+
+}

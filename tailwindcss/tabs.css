@@ -1,0 +1,23 @@
+
+.tabs {
+    @apply flex gap-0.5;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tab {
+    @apply rounded-t-md px-2 py-1;
+    background-color: var(--tab-bg);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.tab:hover {
+    @apply rounded-t-md px-2 py-1;
+    background-color: var(--tab-bg-active);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: var(--tab-bg-active);
+}

@@ -1,0 +1,101 @@
+{% extends "extends/main.html" %}
+{% block title %}How to Play{% endblock %}
+
+
+{% block container %}
+    <section class="form-box">
+
+        <h1 class="font-bold text-2xl p-2">How to Play</h1>
+
+        <div class="inner-option-box">
+            <h2 class="font-bold text-lg">Health, Attacking, and Defending:</h2>
+
+            <p>Health is usually balanced around 100, with weapons causing around 10 per successful hit.</p>
+
+            <p>The player's stats and the current weapon will contribute to the
+                amount of damage caused on a successful hit.</p>
+
+            <p>Defence works on matching the dice roll of the attacker.
+                The attacker must roll higher than the defence stat.</p>
+
+            <p>Defence cannot be 0, and it cannot be 6.</p>
+
+            <p>Here's defence scenarios:</p>
+
+            <blockquote>
+                If the player's defence is 3; The enemy will need to
+                roll a 4 or above to land a successful hit.
+                A roll of 3 matches the players defence, and is therefore blocked.
+            </blockquote>
+
+            <blockquote>
+                If the player's defence is 1; The enemy will need to
+                roll a 2 or above to land a successful hit.
+                If the enemy rolls a 1, this is treated as a miss.
+            </blockquote>
+
+            <blockquote>
+                If the player's defence is 5; The enemy will need to
+                roll a 6 to land a successful hit.
+                The player cannot be invulnerable, rolling a 6 ensures this.
+            </blockquote>
+
+        </div>
+
+        <div class="inner-option-box">
+            <h2 class="font-bold text-lg">Stats &amp; How They Work:</h2>
+
+            <p>Each stat has a different purpose and will be used in
+                different scenarios. The checks will be done by the Quest Master,
+                using common sense on when to check.</p>
+
+            <ul>
+                <li><strong>Strength:</strong> Used for physical attacks and checks.</li>
+                <li><strong>Agility:</strong> Used for dodging and quick actions.</li>
+                <li><strong>Intelligence:</strong> Used for magic and knowledge checks.</li>
+                <li><strong>Luck:</strong> Used for random events and chance checks.</li>
+                <li><strong>Perception:</strong> Used for spotting hidden items and enemies.</li>
+                <li><strong>Persuasion:</strong> Used for talking your way out of situations.</li>
+            </ul>
+
+            <p>All stat rolls are based on a 6-sided die.</p>
+
+            <p>The player's stat works by subtracting the value of the stat from the player's roll.</p>
+
+            <p>Let's take the player's Strength as an example, here's a scenario:</p>
+
+            <blockquote>
+                If the player's Strength is 4 ( 6 &minus; 4 = 2 ); The player will need to
+                roll above a 2 to be successful. In this case the player will need to roll a 3 or above.
+            </blockquote>
+
+            <blockquote>
+                If the player's Strength is 1 ( 6 &minus; 1 = 5 ); The player will need to
+                roll above a 5 to be successful. In this case the player will need to roll a 6.
+            </blockquote>
+
+            <p>A stat with 0 will always fail.</p>
+
+        </div>
+
+        <div class="inner-option-box">
+            <h2 class="font-bold text-lg">The Rules of Effects:</h2>
+
+            <p>Effects are temporary changes to the player's stats and will be used in different scenarios.</p>
+
+            <ul>
+                <li><strong>Poisoned:</strong> 10 damage each turn, this will last until the encounter is over.</li>
+                <li><strong>Sleeping: </strong> Unable to do any actions. This will last until you are hit.</li>
+                <li>
+                    <strong>Confused:</strong> You run the risk of attacking teammates, or wondering into bad places.
+                    This will last two turns.
+                </li>
+                <li>
+                    <strong>Buffed:</strong> Your damage output is increased. This will last until the encounter is over.
+                </li>
+            </ul>
+
+        </div>
+
+    </section>
+{% endblock %}

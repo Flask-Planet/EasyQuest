@@ -1,0 +1,115 @@
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('body', {
+
+            init() {
+                console.log("Alpine store body initialized")
+            },
+
+            message_count: 0,
+
+            messages: {},
+
+            showMessage(msg, status = 'message') {
+
+                const index = this.message_count
+
+                const timeout = setTimeout(() => {
+                    this.removeMessage(index)
+                }, 10000)
+
+                this.messages[index] = {
+                    message: msg,
+                    status: status,
+                    timeout: timeout
+                }
+
+                this.message_count += 1
+
+            },
+
+            removeMessage(index) {
+                if (this.messages[index].timeout) {
+                    clearTimeout(this.messages[index].timeout)
+                }
+                delete this.messages[index]
+            },
+
+            clearMessageTimeout(index) {
+                if (this.messages[index].timeout) {
+                    clearTimeout(this.messages[index].timeout)
+                }
+            },
+
+            showModal(id) {
+                document.getElementById(id).showModal()
+            },
+            closeModal(id) {
+                document.getElementById(id).close()
+            }
+
+        })
+    })
+</script>
+
+<div class="fixed top-0 right-0 flex flex-col z-50 gap-2 m-4"
+     :class="$store.body.messages.length > 0 ? 'p-4' : ''">
+    <template x-for="(message, index) in $store.body.messages">
+        <div class="flash" @mouseenter="$store.body.clearMessageTimeout(index)">
+
+            <div class="relative top-0.5 -right-4">
+                <button type="button"
+                        @click="$store.body.removeMessage(index)">
+                    <img width="24"
+                         src="{{ url_for('static', filename='icons/close.svg') }}"
+                         alt="Close">
+                </button>
+            </div>
+
+            <div class="flash-message">
+
+                <img x-cloak
+                     x-show="message.status === 'message'"
+                     width="24"
+                     src="{{ url_for('static', filename='icons/message.svg') }}"
+                     alt="Message">
+
+
+                <img x-cloak
+                     x-show="message.status === 'bad'"
+                     width="24"
+                     src="{{ url_for('static', filename='icons/bad.svg') }}"
+                     alt="Bad">
+
+                <img x-cloak
+                     x-show="message.status === 'good'"
+                     width="24"
+                     src="{{ url_for('static', filename='icons/good.svg') }}"
+                     alt="Good">
+
+
+                <img x-cloak
+                     x-show="message.status === 'info'"
+                     width="24"
+                     src="{{ url_for('static', filename='icons/info.svg') }}"
+                     alt="Info">
+
+                <span x-text="message.message"></span>
+
+            </div>
+
+        </div>
+    </template>
+</div>
+
+{%- with messages = get_flashed_messages(with_categories=true) -%}
+    <script defer>
+        {%- if messages -%}
+            document.addEventListener('alpine:init', () => {
+                {%- for category, message in messages -%}
+                    Alpine.store('body').showMessage('{{ message }}', '{{ category }}')
+                {%- endfor -%}
+            })
+        {%- endif %}
+    </script>
+{%- endwith %}

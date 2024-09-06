@@ -5,7 +5,6 @@ from app.flask_.extensions import db
 
 
 class NPArcCard(db.Model):
-
     # PriKey
     np_arc_card_id = sqla.Column(sqla.Integer, primary_key=True)
 

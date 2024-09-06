@@ -1,6 +1,6 @@
 import sqlalchemy as sqla
 from flask_imp.auth import (
-    authenticate_password, generate_salt, encrypt_password, generate_private_key
+    authenticate_password
 )
 from sqlalchemy.orm import relationship
 

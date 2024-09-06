@@ -1,0 +1,206 @@
+{% extends "extends/main.html" %}
+{% block title %}Quests - {{ q_quest.title }}{% endblock %}
+
+{% block alpinejs_page_data %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('quest_purgatory', () => ({
+
+                socket: null,
+
+                user_id: '{{ session.get("user_id") }}',
+
+                quest_id: {{ q_quest.quest_id }},
+                quest_code: '{{ q_quest.quest_code }}',
+                title: '{{ q_quest.title }}',
+                genre: '{{ q_quest.rel_genre.genre }}',
+                summary: '{{ q_quest.summary }}',
+
+                building: {{ q_quest.building|string|lower }},
+                live: {{ q_quest.live|string|lower }},
+                finished: {{ q_quest.finished|string|lower }},
+
+                show_leave: false,
+
+                section_how_to_play: false,
+                section_arc_cards: false,
+                section_characters: true,
+
+                arc_cards: [],
+                characters: [],
+
+                getArcCards() {
+                    fetch('/api/quests/arc-cards/{{ q_quest.quest_id }}', {
+                        method: 'GET',
+                        credentials: 'include',
+                    })
+                        .then(response => response.json())
+                        .then(jsond => {
+                            this.arc_cards = jsond.data
+                        })
+                },
+
+                getCharacters() {
+                    fetch('/api/characters/user/{{ session.get("user_id") }}/in-quest/{{ q_quest.quest_id }}', {
+                        method: 'GET',
+                        credentials: 'include',
+                    })
+                        .then(response => response.json())
+                        .then(jsond => {
+                            this.characters = jsond.data
+                        })
+                },
+
+                calculateHealthPercentage(current_health, health) {
+                    if (current_health === health) {
+                        return 100;
+                    }
+                    return (current_health / health) * 100;
+                },
+
+                healthBarClass(health) {
+                    if (health < 40) {
+                        return 'low';
+                    }
+                    if (health >= 40 && health < 70) {
+                        return 'medium';
+                    }
+                    if (health >= 70) {
+                        return 'high';
+                    }
+                },
+
+                init() {
+                    this.getArcCards()
+                    this.getCharacters()
+                }
+
+            }))
+        })
+
+    </script>
+{% endblock %}
+
+
+{% block container %}
+
+    <section x-data="quest_purgatory" class="slim">
+
+        <div class="inner-option-box">
+            <h1 class="text-2xl">{{ q_quest.title }}</h1>
+            <p>{{ q_quest.summary }}</p>
+        </div>
+        <div class="inner-option-box">
+            <p>Genre: <strong>{{ q_quest.rel_genre.genre }}</strong></p>
+            <p>Quest Code: <strong>{{ q_quest.quest_code }}</strong></p>
+        </div>
+
+        <section class="collapsible">
+            <button @click="section_how_to_play = !section_how_to_play"
+                    class="btn"
+                    :class="section_how_to_play ? 'open' : 'closed'">
+                <span>How to Play</span>
+
+                <img width="12"
+                     x-cloak
+                     x-show="!section_how_to_play"
+                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                     alt="Fold Down">
+                <img width="12"
+                     x-cloak
+                     x-show="section_how_to_play"
+                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                     alt="Fold Up">
+            </button>
+            <div class="collapsible-content"
+                 x-cloak
+                 x-show="section_how_to_play">
+
+                {% include 'quest/includes/hot-to-play.html' %}
+
+            </div>
+
+        </section>
+
+        <section class="collapsible">
+
+            <button @click="section_characters = !section_characters"
+                    class="btn"
+                    :class="section_characters ? 'open' : 'closed'">
+                <span>Characters (<span x-text="characters.length"></span>)</span>
+
+                <img width="12"
+                     x-cloak
+                     x-show="!section_characters"
+                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                     alt="Fold Down">
+                <img width="12"
+                     x-cloak
+                     x-show="section_characters"
+                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                     alt="Fold Up">
+            </button>
+
+            <div class="collapsible-content"
+                 x-cloak
+                 x-show="section_characters">
+
+                {% include 'quest/purgatory/characters.html' %}
+
+            </div>
+
+        </section>
+
+        <section class="collapsible">
+
+            <button @click="section_arc_cards = !section_arc_cards"
+                    class="btn"
+                    :class="section_arc_cards ? 'open' : 'closed'">
+                <span>Arc Cards (<span x-text="arc_cards.length"></span>)</span>
+
+                <img width="12"
+                     x-cloak
+                     x-show="!section_arc_cards"
+                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                     alt="Fold Down">
+                <img width="12"
+                     x-cloak
+                     x-show="section_arc_cards"
+                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                     alt="Fold Up">
+            </button>
+
+            <div class="collapsible-content"
+                 x-cloak
+                 x-show="section_arc_cards">
+
+                {% include 'quest/purgatory/selectable_arc_cards.html' %}
+
+            </div>
+
+        </section>
+
+
+    </section>
+
+
+    <section class="slim" x-data="{show_leave: false}">
+        <div class="flex gap-2">
+            <button class="btn danger w-48" @click="show_leave = true">Leave Quest</button>
+            <button class="btn w-48" @click="show_leave = false" x-cloak x-show="show_leave">Cancel</button>
+        </div>
+        <div x-cloak x-show="show_leave">
+            <div class="inner-option-box gap-4">
+                <strong class="font-bold text-red-700">DANGER ZONE</strong>
+                <p>Leaving the Quest will delete any characters you have created.
+                    This cannot be undone.</p>
+                <a class="btn danger"
+                   style="max-width: 320px;"
+                   href="{{ url_for('quest.leave', quest_code=q_quest.quest_code) }}">
+                    Leave</a>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

@@ -1,7 +1,8 @@
 from sqlalchemy import select, update, insert, delete
 
 from app.flask_.extensions import db
-from app.flask_.models import ArcCard, dater
+from app.flask_.models import ArcCard
+from app.utilities import DatetimeDeltaMC
 
 
 def get_by_id(arc_card_id) -> ArcCard | None:
@@ -12,7 +13,7 @@ def get_by_id(arc_card_id) -> ArcCard | None:
     return db.session.execute(sql).scalar_one_or_none()
 
 
-def get_by_quest_id(quest_id) -> ArcCard | None:
+def get_by_quest_id(quest_id) -> list[ArcCard] | None:
     sql = (
         select(ArcCard)
         .where(ArcCard.fk_quest_id == quest_id)
@@ -56,7 +57,7 @@ def create_arc_card(
             perception=perception,
             persuasion=persuasion,
             order=0,
-            created=dater(),
+            created=DatetimeDeltaMC().datetime,
         )
         .returning(ArcCard)
     )
@@ -120,7 +121,7 @@ def create_arc_cards_from_json(quest_id, arc_cards_raw: dict[str, list]):
                 perception=int_val(c.get('perception', 0)),
                 persuasion=int_val(c.get('persuasion', 0)),
                 order=int_val(c.get('order', 0)),
-                created=dater(),
+                created=DatetimeDeltaMC().datetime,
             )
         )
 

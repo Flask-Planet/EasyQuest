@@ -12,6 +12,22 @@ def get_by_id(quest_id) -> Quest | None:
     return db.session.execute(sql).scalar_one_or_none()
 
 
+def get_by_user_id(user_id) -> list[Quest] | None:
+    sql = (
+        select(Quest)
+        .where(Quest.fk_user_id == user_id)
+    )
+    return db.session.execute(sql).scalars().all()
+
+
+def get_by_quest_code_list(quest_codes: list) -> list[Quest] | None:
+    sql = (
+        select(Quest)
+        .where(Quest.quest_code.in_(quest_codes))
+    )
+    return db.session.execute(sql).scalar_one_or_none()
+
+
 def get_by_quest_code(quest_code) -> Quest | None:
     sql = (
         select(Quest)

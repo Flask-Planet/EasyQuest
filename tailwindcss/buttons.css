@@ -29,6 +29,10 @@
     @apply cursor-not-allowed opacity-60;
 }
 
+.disabled {
+    @apply cursor-not-allowed opacity-60;
+}
+
 .btn.fait {
     background-color: var(--button-fait-bg);
     color: var(--button-fait-text);

@@ -1,4 +1,25 @@
+from loguru import logger
+import sys
 from .flask_ import create_app as forward_create_app
+
+logger.remove()
+
+# logger.add(
+#     "logs/app.log",
+#     rotation="1 day",
+#     retention="7 days",
+#     level="DEBUG",
+#     backtrace=True,
+#     diagnose=True,
+# )
+logger.add(
+    sys.stderr,
+    colorize=True,
+    format=("<green>{time:YYYY-MM-DD HH:mm:ss}</green> |"
+            " <level>{level: <8}</level> |"
+            " <cyan>{name}</cyan>:"
+            " - <level>{message}</level>"),
+)
 
 __all__ = ["create_app"]
 

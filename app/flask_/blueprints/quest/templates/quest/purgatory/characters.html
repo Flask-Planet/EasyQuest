@@ -1,0 +1,255 @@
+<div class="character-cards">
+
+    <template x-for="c in characters">
+        <div class="character-card" x-data="{show_delete: false}">
+
+            <div class="inner-option-box-min flex flex-col">
+                <small>Name</small>
+                <h1 class="text-2xl mb-3" x-text="c.full_name"></h1>
+                <small>Backstory</small>
+                <p x-text="c.back_story"></p>
+            </div>
+
+            <div class="character-card-sections">
+
+                {# ARC #}
+                <div class="character-card-section">
+                    <div class="inner-option-box-min flex flex-col">
+                        <small>Arc</small>
+                        <h3 class="text-2xl mb-3" x-text="c.arc"></h3>
+
+                        <p x-text="c.description"></p>
+                    </div>
+
+
+                    <div class="inner-option-box-min" x-cloak x-show="c.modifier">
+                        <div class="flex items-center gap-1">
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/modifier.svg') }}"
+                                 alt="Modifier">
+                            <small>Modifier</small>
+                        </div>
+
+                        <div class="character-stat">
+                            <p class="px-2" x-text="c.modifier"></p>
+                        </div>
+                    </div>
+
+
+                    <div class="inner-option-box-min" x-cloak x-show="c.bonus">
+
+                        <div class="flex items-center gap-1">
+
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/bonus.svg') }}"
+                                 alt="Bonus">
+                            <small>Bonus</small>
+
+                        </div>
+
+                        <div class="character-stat">
+                            <p class="px-2" x-text="c.bonus"></p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {# HEALTH + WEAPON + DEFENSE + STATS #}
+                <div class="character-card-section">
+                    <div class="inner-option-box-min" x-cloak x-show="c.modifier">
+                        <div>
+
+                            <div class="flex justify-between items-center mb-1">
+                                <div class="flex items-center gap-2 mb-1">
+
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/health.svg') }}"
+                                         alt="Health">
+                                    <small>Health</small>
+
+                                </div>
+
+                                <div>
+                                    (
+                                    <small x-text="c.current_health"></small>
+                                    / <small x-text="c.health"></small>
+                                    )
+                                </div>
+                            </div>
+
+                            <div class="character-health">
+
+                                <div :class="healthBarClass(calculateHealthPercentage(c.current_health, c.health))"
+                                     :style="'width: ' + calculateHealthPercentage(c.current_health, c.health) + '%'">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/defence.svg') }}"
+                                     alt="Defence">
+                                <small>Defence</small>
+                            </div>
+
+                            <div class="pill pill-defence" x-text="c.defence"></div>
+                        </div>
+
+                    </div>
+                    <div class="inner-option-box-min">
+                        <small>Starting Weapon</small>
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/weapon.svg') }}"
+                                     alt="Weapon">
+                                <small x-text="c.weapon_name"></small>
+                            </div>
+
+                            <div class="pill pill-attack" x-text="c.weapon_damage"></div>
+                        </div>
+                    </div>
+                    <div class="inner-option-box-min">
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/strength.svg') }}"
+                                     alt="Strength">
+                                <small>Strength</small>
+                            </div>
+
+                            <div class="pill" x-text="c.strength"></div>
+                        </div>
+
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/agility.svg') }}"
+                                     alt="Agility">
+                                <small>Agility</small>
+                            </div>
+
+                            <div class="pill" x-text="c.agility"></div>
+                        </div>
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/intelligence.svg') }}"
+                                     alt="Intelligence">
+                                <small>Intelligence</small>
+                            </div>
+
+                            <div class="pill" x-text="c.intelligence"></div>
+                        </div>
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/luck.svg') }}"
+                                     alt="Luck">
+                                <small>Luck</small>
+                            </div>
+
+                            <div class="pill" x-text="c.luck"></div>
+                        </div>
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/perception.svg') }}"
+                                     alt="Perception">
+                                <small>Perception</small>
+                            </div>
+
+                            <div class="pill" x-text="c.perception"></div>
+                        </div>
+
+                        <div class="character-stat">
+                            <div>
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/persuasion.svg') }}"
+                                     alt="Persuasion">
+                                <small>Persuasion</small>
+                            </div>
+
+                            <div class="pill" x-text="c.persuasion"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {# INVENTORY #}
+                <div class="character-card-section">
+
+                    <div class="inner-option-box-min">
+                        <div class="character-stat">
+                            <span class="flex items-center gap-1">
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/gold.svg') }}"
+                                     alt="Persuasion"><small>Gold</small>
+                            </span>
+
+                            <div class="pill" x-text="c.gold"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="inner-option-box-min">
+
+                        <div class="flex items-center gap-1 mb-2">
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/inventory.svg') }}"
+                                 alt="Inventory">
+                            <small>Inventory</small>
+                        </div>
+
+                        <template x-for="item in c.inventory">
+                            <div class="inner-option-box-min">
+                                <p class="text-sm" x-text="item.name"></p>
+                                <small x-text="item.description"></small>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="inner-option-box-min flex flex-col gap-2">
+                <div class="flex gap-2">
+                    <button class="btn confirm" @click="show_delete = true">Request to join quest</button>
+                    <button class="btn danger" @click="show_delete = true">Delete Character</button>
+                </div>
+                <div x-cloak x-show="show_delete">
+                    <div class="inner-option-box gap-4">
+                        <strong class="font-bold text-red-700">DANGER ZONE</strong>
+                        <p>Deleting this character will remove all progress and items associated with it.
+                            This cannot be undone.</p>
+                        <div class="flex gap-2">
+                            <button class="btn w-60" @click="show_delete = false" x-cloak x-show="show_delete">Cancel
+                            </button>
+                            <a class="btn danger"
+                               :href="`/quest/${quest_code}/delete-character/${c.character_id}`">
+                                Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </template>
+
+    <div x-cloak x-show="characters.length === 0">
+        <p>No Characters, add one by picking an Arc Card below.</p>
+    </div>
+
+</div>

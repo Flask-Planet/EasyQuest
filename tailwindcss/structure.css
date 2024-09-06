@@ -9,6 +9,21 @@ body {
     overscroll-behavior: contain;
 }
 
+.flash {
+    @apply flex w-full justify-start;
+    max-width: 400px;
+    min-width: 0;
+}
+
+.flash-message {
+    @apply flex justify-start items-start
+    py-6 px-8 border rounded-md gap-4 flex-grow-0;
+    width: 400px;
+    background-color: var(--option-box-bg);
+    border-color: var(--option-box-b);
+    min-width: 0;
+}
+
 dialog {
     @apply relative z-10 overflow-hidden rounded-md;
     background: none;
@@ -120,6 +135,12 @@ section.header {
     @apply px-2
 }
 
+section.slim {
+    @apply border p-4 rounded-md;
+    border-color: rgba(238, 238, 238, 0.05);
+    background-color: rgba(238, 238, 238, 0.01);
+}
+
 section.bordered {
     @apply border p-8 rounded-md;
     border-color: rgba(238, 238, 238, 0.05);
@@ -215,7 +236,7 @@ section.bordered {
 }
 
 .quest-arc-cards {
-    @apply flex flex-wrap xl:justify-start justify-center items-start gap-4;
+    @apply flex flex-wrap justify-center items-start gap-4;
 }
 
 .quest-arc-card {
@@ -237,4 +258,59 @@ section.bordered {
 .quest-new-arc-card {
     @apply w-full;
     max-width: 600px;
+}
+
+
+.collapsible {
+    @apply flex flex-col rounded-md w-full shadow-lg border gap-0;
+    border-color: rgba(238, 238, 238, 0.05);
+    background-color: rgba(238, 238, 238, 0.01);
+    margin: 0;
+}
+
+.collapsible > button.open {
+    @apply rounded-b-none inline-flex justify-between;
+}
+
+.collapsible > button.closed {
+    @apply rounded inline-flex justify-between;
+}
+
+.collapsible-content {
+    @apply p-4;
+}
+
+.character-cards {
+    @apply flex flex-col gap-2;
+}
+
+.character-card {
+    @apply flex flex-col w-full gap-2 p-4 rounded-md;
+    background-color: var(--option-box-bg);
+    border: 1px solid var(--option-box-b);
+}
+
+.character-card-sections {
+    @apply grid grid-cols-3 gap-2;
+}
+
+
+@media (max-width: 1200px) {
+    .character-card-sections {
+        @apply grid-cols-2;
+    }
+}
+
+@media (max-width: 900px) {
+    .character-card-sections {
+        @apply grid-cols-1;
+    }
+}
+
+.character-card-arc-section {
+    @apply w-full;
+}
+
+.character-card-section {
+    @apply w-full flex flex-col gap-2;
 }

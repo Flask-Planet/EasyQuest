@@ -12,6 +12,7 @@ class Quest(db.Model, CrudMixin):
     quest_id = sqla.Column(sqla.Integer, primary_key=True)
 
     # ForKey
+    fk_user_id = sqla.Column(sqla.Integer, sqla.ForeignKey('user.user_id'), nullable=False)
     fk_genre_id = sqla.Column(sqla.Integer, sqla.ForeignKey('genre.genre_id'), nullable=False)
 
     # Data
@@ -26,6 +27,18 @@ class Quest(db.Model, CrudMixin):
     created = sqla.Column(sqla.DateTime)
 
     # Relationships
+    rel_purgatory = relationship(
+        "QuestPurgatory",
+        primaryjoin="QuestPurgatory.fk_quest_id==Quest.quest_id",
+        viewonly=True
+    )
+
+    character_join_requests = relationship(
+        "CharacterJoinRequest",
+        primaryjoin="CharacterJoinRequest.fk_quest_id==Quest.quest_id",
+        viewonly=True
+    )
+
     rel_genre = relationship(
         "Genre",
         primaryjoin="Genre.genre_id==Quest.fk_genre_id",

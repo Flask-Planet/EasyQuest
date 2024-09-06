@@ -1,7 +1,16 @@
-from app.flask_.extensions import db
-from app.flask_.models import User
 from flask_imp.auth import generate_salt, encrypt_password, generate_private_key
 from sqlalchemy import update, select, insert
+
+from app.flask_.extensions import db
+from app.flask_.models import User
+
+
+def get_by_id(user_id) -> User | None:
+    sql = (
+        select(User)
+        .where(User.user_id == user_id)
+    )
+    return db.session.execute(sql).scalar_one_or_none()
 
 
 def add_user(first_name, email_address, password, permission_level=1):
@@ -22,7 +31,10 @@ def add_user(first_name, email_address, password, permission_level=1):
         .returning(User)
     )
 
-    return db.session.execute(sql).scalar_one()
+    result = db.session.execute(sql).scalar_one()
+    db.session.commit()
+
+    return result
 
 
 def login(email_address, password) -> User | None:

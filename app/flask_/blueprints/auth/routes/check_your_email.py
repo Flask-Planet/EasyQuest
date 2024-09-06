@@ -5,6 +5,6 @@ from .. import bp
 
 
 @bp.get("/check-your-email")
-@login_check('authenticated', False, fail_endpoint='www.quests')
+@login_check('authenticated', False, fail_endpoint='quests')
 def check_your_email():
     return render_template(bp.tmpl("check_your_email.html"))

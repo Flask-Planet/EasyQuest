@@ -15,7 +15,7 @@
                 {% if character.locked %}
                     <button class="w-100 mt-1" disabled>Edit ( Character is locked )</button>
                 {% else %}
-                    <a href="{{ url_for('www.quest.edit_character', quest_id=character.fk_quest_id, character_id=character.character_id) }}">
+                    <a href="{{ url_for('quest.edit_character', quest_id=character.fk_quest_id, character_id=character.character_id) }}">
                         <button class="w-100 mt-1">Edit</button>
                     </a>
                 {% endif %}

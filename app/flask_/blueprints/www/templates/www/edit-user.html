@@ -9,7 +9,7 @@
 
         <div class="action-box mb-1">
             <div class="button-group">
-                <a href="{{ url_for('www.quests') }}">
+                <a href="{{ url_for('quests.index') }}">
                     <button type="button">< All Quests</button>
                 </a>
                 <button type="submit">Save</button>
@@ -17,7 +17,7 @@
                 <a x-cloak
                    x-show="show_delete"
                    @click.outside="show_delete = false"
-                   href="{{ url_for('www.quest.delete', quest_id=q_quest.quest_id) }}">
+                   href="{{ url_for('quest.delete', quest_id=q_quest.quest_id) }}">
                     <button type="button" class="bg-red">Confirm Delete</button>
                 </a>
             </div>

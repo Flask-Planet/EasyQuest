@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     {% block header %}{% endblock %}
-{#    <script>#}
-{#        const WS = '{{ config.get("WS", "http://127.0.0.1:5001") }}';#}
-{#    </script>#}
-{#    <script defer src="{{ url_for('static', filename='js/alpine_websockets.js') }}"></script>#}
+    {#    <script>#}
+    {#        const WS = '{{ config.get("WS", "http://127.0.0.1:5001") }}';#}
+    {#    </script>#}
     <script defer src="{{ url_for('static', filename='js/alpine/collapse.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/alpine/alpinejs_3.js') }}"></script>
 </head>
-<body data-theme='dark' {% block body_attr %}{% endblock %}>
+<body data-theme='dark' x-data>
 
 {% block global %}
 
@@ -29,5 +29,6 @@
 
 {% block alpinejs_page_data %}
 {% endblock %}
+{% include "includes/flash.html" %}
 </body>
 </html>

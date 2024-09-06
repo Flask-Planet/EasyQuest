@@ -5,7 +5,7 @@
 
 {% block container %}
     <div class="auth-box">
-        <form action="{{ url_for('auth.register_post') }}" method="post">
+        <form action="{{ url_for('auth.register') }}" method="post">
             <label for="first_name">Your First Name</label>
             <input type="text" id="first_name" name="first_name" value="{{ temp_session.get('first_name', '') }}"
                    placeholder="Bob" required>

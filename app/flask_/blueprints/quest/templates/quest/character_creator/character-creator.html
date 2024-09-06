@@ -1,0 +1,233 @@
+{% extends "extends/main.html" %}
+{% block title %}Add Quest{% endblock %}
+
+
+{% block alpinejs_page_data %}
+    <script>
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('character_creator', () => ({}))
+        })
+
+    </script>
+{% endblock %}
+
+
+{% block container %}
+    <section x-data="character_creator">
+
+        <form action="{{
+                url_for('quest.character_creator', quest_code=quest.quest_code, arc_card_id=arc_card.arc_card_id) }}"
+              method="post"
+              class="form-box">
+
+            <div class="flex flex-row justify-start gap-2 mb-6">
+                <a href="{{ url_for('quest.purgatory', quest_code=quest.quest_code) }}" role="button" class="btn fait">
+                    Cancel
+                </a>
+                <button type="submit" class="btn confirm">Create Character</button>
+            </div>
+
+            <h2 class="text-2xl py-2 px-0.5">Your Character</h2>
+
+            <label for="full_name">Character Name</label>
+            <input type="text" name="full_name" id="full_name" class="input" required>
+
+            <label for="back_story">Backstory</label>
+                <textarea name="back_story" id="back_story" cols="30" rows="5"></textarea>
+
+            <h2 class="text-2xl py-2 px-0.5">Arc Card</h2>
+
+            <div class="inner-option-box-stripped p-4">
+
+                <div class="quest-arc-cards">
+
+                    <div class="quest-arc-card">
+
+                        <h3 class="text-2xl">{{ arc_card.arc }}</h3>
+
+                        {# DESCRIPTION #}
+                        <p class="py-2">{{ arc_card.description }}</p>
+
+                        {# MODIFIER #}
+                        {% if arc_card.modifier %}
+                            <div class="inner-option-box-min">
+
+                                <div class="flex items-center gap-1">
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/modifier.svg') }}"
+                                         alt="Modifier">
+                                    <small>Modifier</small>
+                                </div>
+
+                                <div class="character-stat">
+                                    <p class="px-2">{{ arc_card.modifier }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# BONUS #}
+                        {% if arc_card.bonus %}
+                            <div class="inner-option-box-min">
+
+                                <div class="flex items-center gap-1">
+
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/bonus.svg') }}"
+                                         alt="Bonus">
+                                    <small>Bonus</small>
+
+                                </div>
+
+                                <div class="character-stat">
+                                    <p class="px-2">{{ arc_card.bonus }}</p>
+                                </div>
+
+                            </div>
+                        {% endif %}
+
+                        {# HEALTH #}
+                        <div class="inner-option-box-min flex flex-col gap-2 mt-1">
+
+                            <div>
+
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2 mb-1">
+
+                                        <img class="character-stat-icon"
+                                             src="{{ url_for('static', filename='icons/health.svg') }}"
+                                             alt="Health">
+                                        <small>Health</small>
+
+                                    </div>
+
+                                    <div>
+                                        (
+                                        <small>{{ arc_card.health }}</small>
+                                        / <small>{{ arc_card.health }}</small>
+                                        )
+                                    </div>
+                                </div>
+
+                                <div class="character-health">
+
+                                    <div class="w-full high">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/defence.svg') }}"
+                                         alt="Defence">
+                                    <small>Defence</small>
+                                </div>
+
+                                <div class="pill pill-defence">{{ arc_card.defence }}</div>
+                            </div>
+
+                        </div>
+
+                        {# STARTING WEAPON #}
+                        <div class="inner-option-box-min">
+                            <small>Starting Weapon</small>
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/weapon.svg') }}"
+                                         alt="Weapon">
+                                    <small>{{ arc_card.starting_weapon_name }}</small>
+                                </div>
+
+                                <div class="pill pill-attack">{{ arc_card.starting_weapon_damage }}</div>
+                            </div>
+                        </div>
+
+                        {# CHARACTER STATS #}
+                        <div class="inner-option-box-min">
+
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/strength.svg') }}"
+                                         alt="Strength">
+                                    <small>Strength</small>
+                                </div>
+
+                                <div class="pill">{{ arc_card.strength }}</div>
+                            </div>
+
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/agility.svg') }}"
+                                         alt="Agility">
+                                    <small>Agility</small>
+                                </div>
+
+                                <div class="pill">{{ arc_card.agility }}</div>
+                            </div>
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/intelligence.svg') }}"
+                                         alt="Intelligence">
+                                    <small>Intelligence</small>
+                                </div>
+
+                                <div class="pill">{{ arc_card.intelligence }}</div>
+                            </div>
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/luck.svg') }}"
+                                         alt="Luck">
+                                    <small>Luck</small>
+                                </div>
+
+                                <div class="pill">{{ arc_card.luck }}</div>
+                            </div>
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/perception.svg') }}"
+                                         alt="Perception">
+                                    <small>Perception</small>
+                                </div>
+
+                                <div class="pill">{{ arc_card.perception }}</div>
+                            </div>
+
+                            <div class="character-stat">
+                                <div>
+                                    <img class="character-stat-icon"
+                                         src="{{ url_for('static', filename='icons/persuasion.svg') }}"
+                                         alt="Persuasion">
+                                    <small>Persuasion</small>
+                                </div>
+
+                                <div class="pill">{{ arc_card.persuasion }}</div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </form>
+
+    </section>
+{% endblock %}

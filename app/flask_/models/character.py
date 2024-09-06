@@ -14,7 +14,6 @@ class Character(db.Model, CrudMixin):
     # ForKey
     fk_user_id = sqla.Column(sqla.Integer, sqla.ForeignKey('user.user_id'), nullable=False)
     fk_quest_id = sqla.Column(sqla.Integer, sqla.ForeignKey('quest.quest_id'), nullable=True)
-    fk_arc_card_id = sqla.Column(sqla.Integer, sqla.ForeignKey('arc_card.arc_card_id'), nullable=True)
 
     # Protection
     locked = sqla.Column(sqla.Boolean, nullable=False, default=False)
@@ -26,6 +25,7 @@ class Character(db.Model, CrudMixin):
     display_picture = sqla.Column(sqla.String(256), nullable=True)
 
     # Arc
+    arc_card_id = sqla.Column(sqla.Integer, nullable=True)
     arc = sqla.Column(sqla.String(256), nullable=True)
     description = sqla.Column(sqla.String(1024), nullable=True)
     modifier = sqla.Column(sqla.String(256), nullable=True)

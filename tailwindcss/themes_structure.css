@@ -1,7 +1,7 @@
 [data-theme='dark'] {
 
     --body-bg-color: #20232b;
-    --body-bg-color-faint: rgba(32, 35, 43, 0.4);
+    --body-bg-color-faint: rgba(24, 25, 25, 0.4);
     --body-text-color: rgba(255, 255, 255, 0.8);
     --dialog-bg-color: #344a60;
     --dialog-b-color: #3d5670;

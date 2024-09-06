@@ -6,6 +6,5 @@ bp = ImpBlueprint(__name__, ImpBlueprintConfig(
     url_prefix="/api",
 ))
 
-bp.import_resources("routes")
-
-bp.import_nested_blueprint("quest")
+bp.import_nested_blueprint("characters")
+bp.import_nested_blueprint("quests")

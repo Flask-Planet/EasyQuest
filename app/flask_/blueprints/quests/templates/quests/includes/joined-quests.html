@@ -1,0 +1,87 @@
+{##}
+{##}
+{#  ALPINEJS VALUES SET IN QUESTS/INDEX.HTML  #}
+{##}
+{##}
+<section class="header">
+    <small>Joined Quests</small>
+</section>
+
+<section class="bordered" x-data="joined_quests">
+    <div class="quests">
+        <template x-for="q in joined_quests">
+            <div class="quest-card">
+
+                <div class="flex flex-col gap-2">
+
+                    <div class="inner-option-box">
+                        <h2 x-text="q.__quest__.title"></h2>
+                        <p x-text="q.__quest__.summary"></p>
+                    </div>
+
+                    <div class="inner-option-box">
+                        <p>Genre: <strong x-text="q.__quest__.genre"></strong></p>
+                        <p>Quest Code: <strong x-text="q.__quest__.quest_code"></strong></p>
+                    </div>
+
+                </div>
+
+                <div class="flex flex-col gap-2">
+
+                    <a class="btn confirm"
+                       :href="q.__quest__.purgatory_url">
+                        Enter Quest
+                    </a>
+
+                </div>
+
+            </div>
+
+        </template>
+
+        <div class="quest-card-add">
+            <div class="flex flex-col gap-2">
+                <label for="quest_code" class="hidden">Join Quest</label>
+                <input type="text"
+                       name="quest_code"
+                       id="quest_code"
+                       placeholder="Quest Code"
+                       x-model="find_quest_code"
+                >
+                <button type="button"
+                        class="btn confirm"
+                        @click="findQuest(find_quest_code)">
+                    Find Quest
+                </button>
+                <button type="button"
+                        class="btn fait"
+                        @click="findQuest(find_quest_code)">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        {##}
+        {##}
+        {#  ----- FOUND QUEST ------ #}
+        {##}
+        {##}
+        <dialog id="found_quest">
+            <div x-show="found_quest">
+
+                <h1 class="text-2xl">Quest found!</h1>
+                <h2 class="text-xl" x-text="found_quest.title"></h2>
+                <p x-text="found_quest.summary"></p>
+
+                <button type="button"
+                        class="btn confirm"
+                        @click="joinedQuest(found_quest.quest_id)">Join</button>
+                <button class="btn" @click="$store.body.closeModal(`found_quest`)">
+                    Close
+                </button>
+            </div>
+        </dialog>
+
+    </div>
+
+</section>

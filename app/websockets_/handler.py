@@ -1,11 +1,11 @@
 import json
 
 import websockets
+from loguru import logger
 
-from app.websockets_ import CONNECTIONS, CONNECTION_LOOKUP, AUTHENTICATED
-from .actions import disconnect_user_id, send_to_user_id
-from .authenticate import authenticate
-from .broadcast import broadcast
+from app.websockets_ import CONNECTIONS, AUTHENTICATED
+from .actions import disconnect_user, send_to_user_in_quest, broadcast_to_quest, authenticate, get_data
+from .utilities import get_quest_code_from_path
 
 """
 Inbound message format:
@@ -24,7 +24,7 @@ An example of the system sending a message to a user:
     'token': None,
     'action': 'send_to_user_id',
     'data': {
-        'to_user_id': 2,
+        'user_id': 2,
         'payload': {
             'from_user_id': 1,
             'action': 'run_function',
@@ -39,64 +39,80 @@ An example of the system sending a message to a user:
 async def handler(connection):
     if connection not in CONNECTIONS:
         CONNECTIONS.add(connection)
-        print(f"Connection established: {connection.remote_address[0]} - {connection}")
 
-        print(connection.path)
+        if "system" in connection.path:
+            if connection.remote_address[0] in ["127.0.0.1", "::1"]:
+                logger.opt(colors=True).info(f"<green>System Connection >>> Auto Authenticate</green>")
+                AUTHENTICATED.add(connection)
+        else:
+            logger.info(f"{connection.remote_address[0]}: Connection established - [{connection.path}]")
 
     try:
 
+        ip_address = connection.remote_address[0]
+        path = connection.path
+
         inbound = await connection.recv()
+        quest_code = get_quest_code_from_path(path)
 
         # parse inbound message
         payload = json.loads(inbound)
 
         # split payload
-        user_id = payload.get("user_id")
-        token = payload.get("token")
+        user_id = payload.get("user_id", 0)
+        private_key = payload.get("private_key")
         action = payload.get("action", "disconnect")
         data = payload.get("data")
 
-        if connection.path == "/--ws--/system":
-            if connection.remote_address[0] in ["127.0.0.1", "::1"]:
-                AUTHENTICATED.add(connection)
-
         # disconnect
         if action == "disconnect":
+            logger.info(f"Disconnecting: {connection}")
             await connection.close()
 
         # authenticate connection
         if action == "authenticate":
-            await authenticate(connection, handler, token, user_id)
+            await authenticate(connection, private_key, quest_code, user_id, ip_address)
 
         # Connection is already authenticated
         if connection in AUTHENTICATED:
 
-            # disconnect user_id
-            if action == "disconnect_user_id":
-                await disconnect_user_id(data)
+            # broadcast to everyone in the quest
+            if action == "broadcast_to_quest":
+                await broadcast_to_quest(quest_code, data, ip_address)
 
-            # broadcast to all connected clients
-            if action == "broadcast":
-                await broadcast(connection, handler, data)
+            # send to user
+            if action == "send_to_user_in_quest":
+                await send_to_user_in_quest(quest_code, data, ip_address)
 
-            # send to user_id
-            if action == "send_to_user_id":
-                await send_to_user_id(data)
+            if action == "set_data":
+                await send_to_user_in_quest(quest_code, data, ip_address)
 
-            return handler(connection)
+            if action == "get_data":
+                await get_data(quest_code, user_id, data, ip_address, handler, connection)
 
+            # disconnect user
+            if action == "disconnect_user":
+                await disconnect_user(quest_code, data, ip_address)
+
+            # wait for another action
+            return await handler(connection)
+
+        # if connection is not authenticated
         await connection.close()
 
     except websockets.exceptions.ConnectionClosedError:
-        print(f"Connection closed: {connection}")
+        logger.info(f"{connection.remote_address[0]}: Connection closed by error")
         pass
 
     except websockets.exceptions.ConnectionClosedOK:
-        print(f"Connection closed: {connection}")
+        if "system" in connection.path:
+            logger.opt(colors=True).info(f"<red>System Connection >>> Connection Closed</red>")
+        else:
+            logger.info(f"{connection.remote_address[0]}: Connection closed")
         pass
 
     except json.JSONDecodeError:
-        print(f"Invalid JSON: {connection}")
+        logger.error(f"Invalid JSON: {connection.recv()}")
         await connection.close()
 
     finally:
@@ -104,8 +120,3 @@ async def handler(connection):
             CONNECTIONS.remove(connection)
         if connection in AUTHENTICATED:
             AUTHENTICATED.remove(connection)
-
-        # remove user_id from lookup
-        this_user_id = [k for k, v in CONNECTION_LOOKUP.items() if v == connection]
-        if this_user_id:
-            del CONNECTION_LOOKUP[this_user_id[0]]

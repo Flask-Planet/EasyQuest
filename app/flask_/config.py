@@ -17,6 +17,7 @@ flask_config = FlaskConfig(
 imp_config = ImpConfig(
     init_session={
         "user_id": 0,
+        "user_name": "Guest",
         "authenticated": False,
         "permission_level": 0,
         "temp": {}

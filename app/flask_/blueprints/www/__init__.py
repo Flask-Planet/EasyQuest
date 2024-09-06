@@ -11,4 +11,3 @@ bp = ImpBlueprint(
 )
 
 bp.import_resources()
-bp.import_nested_blueprint("quest")

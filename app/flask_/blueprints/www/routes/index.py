@@ -7,4 +7,4 @@ from .. import bp
 @bp.get("/")
 @login_check('authenticated', True, 'auth.login')
 def index():
-    return redirect(url_for("www.quests"))
+    return redirect(url_for("quests.index"))

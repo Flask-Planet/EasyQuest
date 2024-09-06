@@ -1,0 +1,103 @@
+{% extends "extends/main.html" %}
+{% block title %}Quests{% endblock %}
+
+
+{% block alpinejs_page_data %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('joined_quests', () => ({
+
+                joined_quests: [],
+                find_quest_code: '',
+                found_quest: {},
+
+                getJoinedQuests() {
+                    fetch(
+                        '/api/quests/joined', {
+                            method: 'GET',
+                            credentials: 'include',
+                        })
+                        .then(response => response.json())
+                        .then(jsond => {
+                            if (jsond.ok) {
+                                this.joined_quests = jsond.data
+                            } else {
+                                this.joined_quests = []
+                            }
+                        })
+                },
+
+                joinedQuest(quest_id) {
+                    fetch(
+                        `/api/quests/join/${quest_id}`, {
+                            method: 'GET',
+                            credentials: 'include',
+                        })
+                        .then(response => response.json())
+                        .then(jsond => {
+                            if (jsond.ok) {
+                                Alpine.store("body").showMessage(
+                                    `You have joined Quest [${this.found_quest.quest_code}] -
+                                    Adventure awaits! HUZZAH!`, 'good')
+                                Alpine.store('body').closeModal(`found_quest`)
+
+                                this.getJoinedQuests()
+
+                                this.found_quest = {}
+                                this.find_quest_code = ''
+                            } else {
+                                if (jsond.message) {
+                                    Alpine.store("body").showMessage(jsond.message, 'bad')
+                                } else {
+                                    Alpine.store("body").showMessage(
+                                        'Something went wrong! Please try again later!', 'bad')
+                                }
+                            }
+                        })
+                },
+
+                findQuest(quest_code) {
+                    if (!quest_code) {
+                        Alpine.store("body").showMessage('No quest code entered!', 'bad')
+                        return
+                    }
+                    fetch(
+                        `/api/quests/find/${quest_code}`, {
+                            method: 'GET',
+                            credentials: 'include',
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return {
+                                    ok: false, message:
+                                        'Something went wrong! Try again later.'
+                                }
+                            }
+                            return response.json()
+                        })
+                        .then(jsond => {
+                            if (jsond.ok) {
+                                this.found_quest = jsond.data
+                                Alpine.store("body").showModal('found_quest')
+                            } else {
+                                Alpine.store("body").showMessage(jsond.message, 'bad')
+                            }
+                        })
+                },
+
+                init() {
+                    this.getJoinedQuests()
+                }
+
+            }))
+        })
+    </script>
+{% endblock %}
+
+
+{% block container %}
+
+    {% include "quests/includes/your-quests.html" %}
+    {% include "quests/includes/joined-quests.html" %}
+
+{% endblock %}

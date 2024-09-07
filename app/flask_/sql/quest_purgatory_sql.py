@@ -120,6 +120,18 @@ def delete_by_user_id(user_id) -> None:
     db.session.execute(sql)
     db.session.commit()
 
+def delete_by_quest_id_user_id(quest_id, user_id) -> None:
+    sql = (
+        delete(QuestPurgatory)
+        .where(
+            QuestPurgatory.fk_quest_id == quest_id,
+            QuestPurgatory.fk_user_id == user_id,
+        )
+    )
+
+    db.session.execute(sql)
+    db.session.commit()
+
 
 def delete_by_id(quest_purgatory_id) -> None:
     sql = (

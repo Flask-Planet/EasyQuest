@@ -125,6 +125,19 @@ def reject(character_join_request_id) -> None:
     db.session.commit()
 
 
+def delete_by_quest_id_user_id(quest_id, user_id) -> None:
+    sql = (
+        delete(CharacterJoinRequest)
+        .where(
+            CharacterJoinRequest.fk_quest_id == quest_id,
+            CharacterJoinRequest.fk_user_id == user_id,
+        )
+    )
+
+    db.session.execute(sql)
+    db.session.commit()
+
+
 def delete_by_user_id(user_id) -> None:
     sql = (
         delete(CharacterJoinRequest)

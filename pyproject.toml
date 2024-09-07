@@ -13,7 +13,7 @@ dependencies = [
     "requests",
     "pyqwe",
     "websockets",
-    "loguru"
+    "loguru",
 ]
 
 [project.optional-dependencies]
@@ -51,16 +51,17 @@ npx tailwindcss \
 --watch"""
 dev_stack = [
     "*:flask run --debug",
-    """*:\
-    npx tailwindcss \
-    -c ./configs/tailwind.config.js \
-    -i ./tailwindcss/_.css \
-    -o ./app/flask_/resources/static/css/index.css \
+    """*:npx tailwindcss -c ./configs/tailwind.config.js \
+    -i ./tailwindcss/_.css -o ./app/flask_/resources/static/css/index.css \
     --watch""",
-    """*:\
-    watchmedo auto-restart \
+    """*:watchmedo auto-restart \
     --pattern "*.py" \
     --recursive \
     --signal SIGTERM \
     python3 app websockets"""
+]
+uv_compile = [
+    "*:uv pip compile pyproject.toml -o requirements/development.txt --extra development",
+    "*:uv pip compile pyproject.toml -o requirements/production.txt --extra production",
+    "*:uv pip compile pyproject.toml -o requirements/main.txt"
 ]

@@ -18,9 +18,9 @@ def leave(quest_code):
         flash("Quest not found", "bad")
         return redirect(url_for("quests.index"))
 
-    quest_purgatory_sql.delete_by_user_id(user_id)
-    character_join_request_sql.delete_by_user_id(user_id)
-    character_sql.delete_by_user_id(user_id)
+    quest_purgatory_sql.delete_by_quest_id_user_id(quest.quest_id, user_id)
+    character_join_request_sql.delete_by_quest_id_user_id(quest.quest_id, user_id)
+    character_sql.delete_by_quest_id_user_id(quest.quest_id, user_id)
 
     flash(
         f"You have left Quest [{quest_code}]", "good"

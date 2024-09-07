@@ -33,9 +33,30 @@ docker-build-base = "*:docker build -f Dockerfile-base -t easyquest-base ."
 docker-compose = "*:docker compose up -d --build"
 flask = "*:flask run --debug"
 websockets = "*:python3 -m app.websockets_"
+websockets_reload = """*:
+watchmedo auto-restart \
+--pattern "*.py" \
+--recursive \
+--signal SIGTERM \
+python3 app websockets"""
 tailwindcss = """*:\
 npx tailwindcss \
 -c ./configs/tailwind.config.js \
 -i ./tailwindcss/_.css \
 -o ./app/flask_/resources/static/css/index.css \
 --watch"""
+dev_stack = [
+"*:flask run --debug",
+"""*:\
+npx tailwindcss \
+-c ./configs/tailwind.config.js \
+-i ./tailwindcss/_.css \
+-o ./app/flask_/resources/static/css/index.css \
+--watch""",
+"""*:\
+watchmedo auto-restart \
+--pattern "*.py" \
+--recursive \
+--signal SIGTERM \
+python3 app websockets"""
+]

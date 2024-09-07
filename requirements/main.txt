@@ -35,7 +35,7 @@ markupsafe==2.1.5
     #   werkzeug
 more-itertools==10.4.0
     # via flask-imp
-pyqwe==1.7.1
+pyqwe==1.8.0
     # via easyquest (pyproject.toml)
 python-dotenv==1.0.1
     # via easyquest (pyproject.toml)

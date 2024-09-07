@@ -13,12 +13,16 @@ dependencies = [
     "requests",
     "pyqwe",
     "websockets",
+    "loguru"
 ]
 
 [project.optional-dependencies]
 production = [
     "gunicorn",
     "supervisor",
+]
+development = [
+    "watchdog[watchmedo]",
 ]
 
 [tool.ruff]
@@ -46,17 +50,17 @@ npx tailwindcss \
 -o ./app/flask_/resources/static/css/index.css \
 --watch"""
 dev_stack = [
-"*:flask run --debug",
-"""*:\
-npx tailwindcss \
--c ./configs/tailwind.config.js \
--i ./tailwindcss/_.css \
--o ./app/flask_/resources/static/css/index.css \
---watch""",
-"""*:\
-watchmedo auto-restart \
---pattern "*.py" \
---recursive \
---signal SIGTERM \
-python3 app websockets"""
+    "*:flask run --debug",
+    """*:\
+    npx tailwindcss \
+    -c ./configs/tailwind.config.js \
+    -i ./tailwindcss/_.css \
+    -o ./app/flask_/resources/static/css/index.css \
+    --watch""",
+    """*:\
+    watchmedo auto-restart \
+    --pattern "*.py" \
+    --recursive \
+    --signal SIGTERM \
+    python3 app websockets"""
 ]

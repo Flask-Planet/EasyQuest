@@ -14,6 +14,8 @@ class Character(db.Model, CrudMixin):
     # ForKey
     fk_user_id = sqla.Column(sqla.Integer, sqla.ForeignKey('user.user_id'), nullable=False)
     fk_quest_id = sqla.Column(sqla.Integer, sqla.ForeignKey('quest.quest_id'), nullable=True)
+    # fk_quest_location_id = sqla.Column(
+    #     sqla.Integer, sqla.ForeignKey('quest_location.quest_location_id'), nullable=True)
 
     # Protection
     locked = sqla.Column(sqla.Boolean, nullable=False, default=False)
@@ -59,6 +61,8 @@ class Character(db.Model, CrudMixin):
 
     # Inventory
     inventory = sqla.Column(sqla.JSON, nullable=True)
+
+    # Quest Progress
 
     # Tracking
     created = sqla.Column(sqla.DateTime)

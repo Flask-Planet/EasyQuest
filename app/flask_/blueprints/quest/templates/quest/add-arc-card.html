@@ -25,12 +25,11 @@
 
 
 {% block container %}
-    <section x-data="add_arc_card">
-
+    <section class="slim" x-data="add_arc_card">
 
         <form action="{{ url_for('quest.add_arc_card', quest_id=q_quest.quest_id) }}"
               method="post"
-              class="form-box">
+              class="form-box none">
 
             <input type="hidden" name="defence" x-model="defence">
             <input type="hidden" name="strength" x-model="strength">

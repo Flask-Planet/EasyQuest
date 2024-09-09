@@ -13,7 +13,9 @@
     <script defer src="{{ url_for('static', filename='js/alpine/collapse.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/alpine/alpinejs_3.js') }}"></script>
 </head>
-<body data-theme='dark' x-data>
+<body data-theme='dark'
+      x-data
+      :class="$store.body.dialog ? 'dialog-open' : ''">
 
 {% block global %}
 
@@ -29,6 +31,7 @@
 
 {% block alpinejs_page_data %}
 {% endblock %}
+{% include "includes/alpine-body-data.html" %}
 {% include "includes/flash.html" %}
 </body>
 </html>

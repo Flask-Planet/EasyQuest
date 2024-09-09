@@ -1,28 +1,27 @@
 <div class="character-cards">
 
-    <template x-for="c in characters">
-        <div class="character-card" x-data="{show_delete: false}">
+    <template x-for="character in characters">
 
-            <div class="inner-option-box-min flex flex-col">
-                <small>Name</small>
-                <h1 class="text-2xl mb-3" x-text="c.full_name"></h1>
-                <small>Backstory</small>
-                <p x-text="c.back_story"></p>
-            </div>
+        <div class="character-card" x-data="{show_delete: false}">
 
             <div class="character-card-sections">
 
-                {# ARC #}
-                <div class="character-card-section">
+                <div class="character-arc-effects-section">
+                    <div class="inner-option-box-min flex flex-col">
+                        <small>Character</small>
+                        <h3 class="text-2xl mb-3" x-text="character.full_name"></h3>
+
+                        <p x-text="character.back_story"></p>
+                    </div>
+                    {# ARC #}
                     <div class="inner-option-box-min flex flex-col">
                         <small>Arc</small>
-                        <h3 class="text-2xl mb-3" x-text="c.arc"></h3>
+                        <h3 class="text-2xl mb-3" x-text="character.arc"></h3>
 
-                        <p x-text="c.description"></p>
+                        <p x-text="character.description"></p>
                     </div>
-
-
-                    <div class="inner-option-box-min" x-cloak x-show="c.modifier">
+                    {# MODIFIER #}
+                    <div class="inner-option-box-min" x-cloak x-show="character.modifier">
                         <div class="flex items-center gap-1">
                             <img class="character-stat-icon"
                                  src="{{ url_for('static', filename='icons/modifier.svg') }}"
@@ -31,12 +30,11 @@
                         </div>
 
                         <div class="character-stat">
-                            <p class="px-2" x-text="c.modifier"></p>
+                            <p class="px-2" x-text="character.modifier"></p>
                         </div>
                     </div>
-
-
-                    <div class="inner-option-box-min" x-cloak x-show="c.bonus">
+                    {# BONUS #}
+                    <div class="inner-option-box-min" x-cloak x-show="character.bonus">
 
                         <div class="flex items-center gap-1">
 
@@ -48,18 +46,16 @@
                         </div>
 
                         <div class="character-stat">
-                            <p class="px-2" x-text="c.bonus"></p>
+                            <p class="px-2" x-text="character.bonus"></p>
                         </div>
 
                     </div>
-
                 </div>
 
-                {# HEALTH + WEAPON + DEFENSE + STATS #}
-                <div class="character-card-section">
-                    <div class="inner-option-box-min" x-cloak x-show="c.modifier">
+                <div class="character-health-weapon-defence-stats-section">
+                    {# HEALTH + DEFENSE #}
+                    <div class="inner-option-box-min">
                         <div>
-
                             <div class="flex justify-between items-center mb-1">
                                 <div class="flex items-center gap-2 mb-1">
 
@@ -72,20 +68,20 @@
 
                                 <div>
                                     (
-                                    <small x-text="c.current_health"></small>
-                                    / <small x-text="c.health"></small>
+                                    <small x-text="character.current_health"></small>
+                                    / <small x-text="character.health"></small>
                                     )
                                 </div>
                             </div>
 
                             <div class="character-health">
 
-                                <div :class="healthBarClass(calculateHealthPercentage(c.current_health, c.health))"
-                                     :style="'width: ' + calculateHealthPercentage(c.current_health, c.health) + '%'">
+                                <div :class="healthBarClass(character.current_health)"
+                                     :style="'width: ' + calculateHealthPercentage(
+                                     character.current_health, character.health) + '%'">
                                 </div>
 
                             </div>
-
                         </div>
 
                         <div class="character-stat">
@@ -96,10 +92,11 @@
                                 <small>Defence</small>
                             </div>
 
-                            <div class="pill pill-defence" x-text="c.defence"></div>
+                            <div class="pill pill-defence" x-text="character.defence"></div>
                         </div>
 
                     </div>
+                    {# WEAPON #}
                     <div class="inner-option-box-min">
                         <small>Starting Weapon</small>
                         <div class="character-stat">
@@ -107,14 +104,14 @@
                                 <img class="character-stat-icon"
                                      src="{{ url_for('static', filename='icons/weapon.svg') }}"
                                      alt="Weapon">
-                                <small x-text="c.weapon_name"></small>
+                                <small x-text="character.weapon_name"></small>
                             </div>
 
-                            <div class="pill pill-attack" x-text="c.weapon_damage"></div>
+                            <div class="pill pill-attack" x-text="character.weapon_damage"></div>
                         </div>
                     </div>
+                    {# STATS #}
                     <div class="inner-option-box-min">
-
                         <div class="character-stat">
                             <div>
                                 <img class="character-stat-icon"
@@ -123,7 +120,7 @@
                                 <small>Strength</small>
                             </div>
 
-                            <div class="pill" x-text="c.strength"></div>
+                            <div class="pill" x-text="character.strength"></div>
                         </div>
 
 
@@ -135,7 +132,7 @@
                                 <small>Agility</small>
                             </div>
 
-                            <div class="pill" x-text="c.agility"></div>
+                            <div class="pill" x-text="character.agility"></div>
                         </div>
 
                         <div class="character-stat">
@@ -146,7 +143,7 @@
                                 <small>Intelligence</small>
                             </div>
 
-                            <div class="pill" x-text="c.intelligence"></div>
+                            <div class="pill" x-text="character.intelligence"></div>
                         </div>
 
                         <div class="character-stat">
@@ -157,7 +154,7 @@
                                 <small>Luck</small>
                             </div>
 
-                            <div class="pill" x-text="c.luck"></div>
+                            <div class="pill" x-text="character.luck"></div>
                         </div>
 
                         <div class="character-stat">
@@ -168,7 +165,7 @@
                                 <small>Perception</small>
                             </div>
 
-                            <div class="pill" x-text="c.perception"></div>
+                            <div class="pill" x-text="character.perception"></div>
                         </div>
 
                         <div class="character-stat">
@@ -179,68 +176,78 @@
                                 <small>Persuasion</small>
                             </div>
 
-                            <div class="pill" x-text="c.persuasion"></div>
+                            <div class="pill" x-text="character.persuasion"></div>
                         </div>
-
-                    </div>
-                </div>
-
-                {# INVENTORY #}
-                <div class="character-card-section">
-
-                    <div class="inner-option-box-min">
-                        <div class="character-stat">
-                            <span class="flex items-center gap-1">
-                                <img class="character-stat-icon"
-                                     src="{{ url_for('static', filename='icons/gold.svg') }}"
-                                     alt="Persuasion"><small>Gold</small>
-                            </span>
-
-                            <div class="pill" x-text="c.gold"></div>
-                        </div>
-                    </div>
-
-
-                    <div class="inner-option-box-min">
-
-                        <div class="flex items-center gap-1 mb-2">
-                            <img class="character-stat-icon"
-                                 src="{{ url_for('static', filename='icons/inventory.svg') }}"
-                                 alt="Inventory">
-                            <small>Inventory</small>
-                        </div>
-
-                        <template x-for="item in c.inventory">
-                            <div class="inner-option-box-min">
-                                <p class="text-sm" x-text="item.name"></p>
-                                <small x-text="item.description"></small>
-                            </div>
-                        </template>
 
                     </div>
                 </div>
 
             </div>
 
+            {# GOLD + INVENTORY #}
             <div class="inner-option-box-min flex flex-col gap-2">
+
+                <div class="flex flex-col gap-2">
+
+                    <div class="flex items-center gap-1 mb-2">
+                        <img class="character-stat-icon"
+                             src="{{ url_for('static', filename='icons/inventory.svg') }}"
+                             alt="Inventory">
+                        <small>Inventory</small>
+                    </div>
+
+                    <div class="inner-option-box-min-nw place-self-start
+                    flex align-middle gap-3 p-2 bg-blue-950">
+                        <div class="flex items-center gap-1">
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/gold.svg') }}"
+                                 alt="Gold">
+                            <small>Gold</small>
+                        </div>
+                        <div class="pill pill-gold" x-text="character.gold"></div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <template x-for="item in character.inventory">
+                            <div class="inner-option-box-min-nw place-self-start max-w-96">
+                                <p class="text-sm" x-text="item.name"></p>
+                                <small x-text="item.description"></small>
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="flex flex-col gap-2">
+
                 <div class="flex gap-2">
-                    <button class="btn confirm" @click="show_delete = true">Request to join quest</button>
+                    <a class="btn confirm" :href="`/quest/${quest_code}/${character.character_id}/voyage`">
+                        Join Quest With this character
+                    </a>
                     <button class="btn danger" @click="show_delete = true">Delete Character</button>
                 </div>
+
                 <div x-cloak x-show="show_delete">
-                    <div class="inner-option-box gap-4">
+                    <div class="inner-option-box gap-6">
                         <strong class="font-bold text-red-700">DANGER ZONE</strong>
                         <p>Deleting this character will remove all progress and items associated with it.
                             This cannot be undone.</p>
+
+                        <p>Are you sure you want to delete this character?</p>
+
                         <div class="flex gap-2">
-                            <button class="btn w-60" @click="show_delete = false" x-cloak x-show="show_delete">Cancel
+                            <button class="btn w-48" @click="show_delete = false" x-cloak x-show="show_delete">No
                             </button>
                             <a class="btn danger"
-                               :href="`/quest/${quest_code}/delete-character/${c.character_id}`">
-                                Delete</a>
+                               :href="`/quest/${quest_code}/delete-character/${character.character_id}`">
+                                Yes, Delete</a>
                         </div>
+
                     </div>
                 </div>
+
             </div>
 
 

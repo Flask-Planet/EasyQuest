@@ -1,5 +1,5 @@
 {% extends "extends/main.html" %}
-{% block title %}Quests - {{ q_quest.title }}{% endblock %}
+{% block title %}Quests - {{ quest.title }}{% endblock %}
 
 {% block alpinejs_page_data %}
     <script>
@@ -10,27 +10,27 @@
 
                 user_id: '{{ session.get("user_id") }}',
 
-                quest_id: {{ q_quest.quest_id }},
-                quest_code: '{{ q_quest.quest_code }}',
-                title: '{{ q_quest.title }}',
-                genre: '{{ q_quest.rel_genre.genre }}',
-                summary: '{{ q_quest.summary }}',
+                quest_id: {{ quest.quest_id }},
+                quest_code: '{{ quest.quest_code }}',
+                title: '{{ quest.title }}',
+                genre: '{{ quest.rel_genre.genre }}',
+                summary: '{{ quest.summary }}',
 
-                building: {{ q_quest.building|string|lower }},
-                live: {{ q_quest.live|string|lower }},
-                finished: {{ q_quest.finished|string|lower }},
+                building: {{ quest.building|string|lower }},
+                live: {{ quest.live|string|lower }},
+                finished: {{ quest.finished|string|lower }},
 
                 show_leave: false,
 
                 section_how_to_play: false,
                 section_arc_cards: false,
-                section_characters: true,
+                section_characters: false,
 
                 arc_cards: [],
                 characters: [],
 
                 getArcCards() {
-                    fetch('/api/quests/arc-cards/{{ q_quest.quest_id }}', {
+                    fetch('/api/quests/arc-cards/{{ quest.quest_id }}', {
                         method: 'GET',
                         credentials: 'include',
                     })
@@ -41,7 +41,7 @@
                 },
 
                 getCharacters() {
-                    fetch('/api/characters/user/{{ session.get("user_id") }}/in-quest/{{ q_quest.quest_id }}', {
+                    fetch('/api/characters/user/{{ session.get("user_id") }}/in-quest/{{ quest.quest_id }}', {
                         method: 'GET',
                         credentials: 'include',
                     })
@@ -84,43 +84,43 @@
 
 {% block container %}
 
-    <section x-data="quest_purgatory" class="slim">
+    <section class="slim" x-data="quest_purgatory">
 
-        <div class="inner-option-box">
-            <h1 class="text-2xl">{{ q_quest.title }}</h1>
-            <p>{{ q_quest.summary }}</p>
-        </div>
-        <div class="inner-option-box">
-            <p>Genre: <strong>{{ q_quest.rel_genre.genre }}</strong></p>
-            <p>Quest Code: <strong>{{ q_quest.quest_code }}</strong></p>
+        <div class="flex flex-row justify-between">
+            <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
+                Back
+            </a>
         </div>
 
-        <section class="collapsible">
-            <button @click="section_how_to_play = !section_how_to_play"
-                    class="btn"
-                    :class="section_how_to_play ? 'open' : 'closed'">
-                <span>How to Play</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
-                <img width="12"
-                     x-cloak
-                     x-show="!section_how_to_play"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_how_to_play"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_how_to_play">
+            <div class="inner-option-box order-2 sm:order-1">
+                <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
+                <p>Genre: <strong>{{ quest.rel_genre.genre }}</strong></p>
 
-                {% include 'quest/includes/hot-to-play.html' %}
+                <h2 class="mt-3 font-bold text-2xl">{{ quest.title }}</h2>
+                <p class="mb-3">{{ quest.summary }}</p>
+            </div>
+
+            <div :style="$store.body.genreBackground({{ quest.fk_genre_id }})"
+                 class="min-h-64 w-full rounded-md order-1 sm:order-2">
 
             </div>
 
-        </section>
+        </div>
+
+        <div :style="$store.body.genreBackground(0)"
+             class="min-h-64 w-full rounded-md">
+            <div class="dark-background p-8 min-h-64">
+                <h1 class="text-2xl mb-2">You are in Purgatory</h1>
+                <p class="mb-4">Here you can create Characters from Arc Cards
+                    and see Characters that you've already created.</p>
+                <p class="mb-2 font-bold">First time here?</p>
+                <p class="mb-2">Create a Character from the available Arc Cards.</p>
+                <p class="mb-2">Join the Quest by selecting the Character to join with.</p>
+                <p>For more information on how to play, check out the How To Play section.</p>
+            </div>
+        </div>
 
         <section class="collapsible">
 
@@ -180,6 +180,32 @@
 
         </section>
 
+        <section class="collapsible">
+            <button @click="section_how_to_play = !section_how_to_play"
+                    class="btn"
+                    :class="section_how_to_play ? 'open' : 'closed'">
+                <span>How to Play</span>
+
+                <img width="12"
+                     x-cloak
+                     x-show="!section_how_to_play"
+                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                     alt="Fold Down">
+                <img width="12"
+                     x-cloak
+                     x-show="section_how_to_play"
+                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                     alt="Fold Up">
+            </button>
+            <div class="collapsible-content"
+                 x-cloak
+                 x-show="section_how_to_play">
+
+                {% include 'quest/includes/hot-to-play.html' %}
+
+            </div>
+
+        </section>
 
     </section>
 
@@ -187,17 +213,25 @@
     <section class="slim" x-data="{show_leave: false}">
         <div class="flex gap-2">
             <button class="btn danger w-48" @click="show_leave = true">Leave Quest</button>
-            <button class="btn w-48" @click="show_leave = false" x-cloak x-show="show_leave">Cancel</button>
         </div>
         <div x-cloak x-show="show_leave">
-            <div class="inner-option-box gap-4">
+            <div class="inner-option-box gap-6">
+
                 <strong class="font-bold text-red-700">DANGER ZONE</strong>
+
                 <p>Leaving the Quest will delete any characters you have created.
                     This cannot be undone.</p>
-                <a class="btn danger"
-                   style="max-width: 320px;"
-                   href="{{ url_for('quest.leave', quest_code=q_quest.quest_code) }}">
-                    Leave</a>
+
+                <p>Are you sure you want to leave the Quest?</p>
+
+                <div class="flex gap-2">
+
+                    <button class="btn w-48" @click="show_leave = false">No</button>
+                    <a class="btn danger"
+                       href="{{ url_for('quest.leave', quest_code=quest.quest_code) }}">Yes, leave</a>
+
+                </div>
+
             </div>
         </div>
     </section>

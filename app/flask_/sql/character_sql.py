@@ -122,6 +122,17 @@ def delete_by_quest_id_user_id(quest_id, user_id) -> None:
     db.session.commit()
 
 
+def delete_by_quest_id(quest_id) -> None:
+    sql = (
+        delete(Character)
+        .where(
+            Character.fk_quest_id == quest_id
+        )
+    )
+    db.session.execute(sql)
+    db.session.commit()
+
+
 def delete_by_user_id(user_id) -> None:
     sql = (
         delete(Character)

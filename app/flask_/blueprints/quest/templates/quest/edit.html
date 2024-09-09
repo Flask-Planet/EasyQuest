@@ -1,13 +1,36 @@
 {% extends "extends/main.html" %}
-{% block title %}Quests - {{ q_quest.title }}{% endblock %}
+{% block title %}Quests - {{ quest.title }}{% endblock %}
 
 
 {% block alpinejs_page_data %}
     <script>
-
         document.addEventListener('alpine:init', () => {
             Alpine.data('quest_edit', () => ({
-                tab: '{{ request.args.get('tab', 'arc_cards') }}',
+                section_quest: false,
+                section_arc_cards: false,
+                section_np_arc_cards: false,
+
+                genre_id: {{ quest.fk_genre_id }},
+                title: '{{ quest.title }}',
+                summary: '{{ quest.summary }}',
+
+                genre_name: null,
+
+                genres: {{ genres | tojson | safe }},
+
+                genre_background: null,
+
+                setGenre() {
+                    const parsed_genre = parseInt(this.genre_id)
+                    const genre = this.genres.find(g => g.genre_id === parsed_genre)
+                    this.genre_background = Alpine.store('body').genreBackground(parsed_genre)
+                    this.genre_name = genre.genre
+                },
+
+                init() {
+                    this.setGenre()
+                }
+
             }))
         })
 
@@ -16,122 +39,119 @@
 
 
 {% block container %}
-    <section x-data="quest_edit">
-        <div class="form-box">
-            <form action="{{ url_for('quest.edit', quest_id=q_quest.quest_id, var='edit') }}"
-                  method="post"
-                  class="flex flex-col w-full"
-                  x-data="{genre: '{{ q_quest.fk_genre_id }}'}">
+    <section class="slim" x-data="quest_edit">
 
+        <div class="flex flex-col gap-4">
 
-                <div class="flex flex-row justify-between gap-2 mb-6">
-                    <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
-                        Back
-                    </a>
+            <div class="flex flex-row justify-between">
+                <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
+                    Back
+                </a>
+            </div>
 
-                    <button type="submit" class="btn confirm">Save Quest</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                <div class="inner-option-box order-2 md:order-1">
+                    <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
+                    <p>Genre: <strong x-text="genre_name"></strong></p>
+
+                    <h2 class="text-2xl mt-3 font-bold">{{ quest.title }}</h2>
+                    <p class="mb-3">{{ quest.summary }}</p>
                 </div>
 
-
-                <div class="inner-option-box mb-4">
-
-                    <div>
-                        {% if not q_quest.finished %}
-
-                            {% if not q_quest.building %}
-
-                                {% if q_quest.live %}
-                                    <small>Live</small>
-                                {% else %}
-                                    <small>Paused</small>
-                                {% endif %}
-
-                            {% else %}
-                                <small>Building</small>
-                            {% endif %}
-
-                        {% else %}
-                            <small>Finished</small>
-                        {% endif %}
-                    </div>
-
-                    <div>
-                        <small x-show="genre === '0' || genre === 'None'" x-cloak>
-                            Select a quest genre...</small>
-                        {% for genre in q_genres %}
-                            <small x-show="genre === '{{ genre.genre_id }}'" x-cloak>
-                                {{ genre.genre }}</small>
-                        {% endfor %}
-                    </div>
+                <div :style="genre_background" class="min-h-64 w-full rounded-md order-1 md:order-2">
 
                 </div>
-
-                <label for="title">Title</label>
-                <input type="text" name="title" id="title" value="{{ q_quest.title }}" required>
-
-                <label for="fk_genre_id">Genre</label>
-                <select name="fk_genre_id" id="fk_genre_id" x-model="genre" required>
-                    <option value="0">Select...</option>
-                    {% for genre in q_genres %}
-                        <option value="{{ genre.genre_id }}">
-                            {{ genre.genre }} - {{ genre.description }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <label for="summary">Summary</label>
-                <textarea name="summary" id="summary" cols="30" rows="5"
-                          style="margin-bottom: 0;">{{ q_quest.summary }}</textarea>
-
-            </form>
-
-            <div class="flex flex-col mt-6">
-
-                <div class="tabs">
-                    <button type="button"
-                            @click="tab = 'arc_cards'"
-                            class="tab" :class="tab === 'arc_cards' ? 'active' : ''">
-                        Arc Cards
-                    </button>
-                    <button type="button"
-                            @click="tab = 'np_arc_cards'"
-                            class="tab" :class="tab === 'np_arc_cards' ? 'active' : ''">
-                        Non-Playable Arc Cards
-                    </button>
-                </div>
-
-                {% include 'quest/includes/arc_cards.html' %}
-                {% include 'quest/includes/np_arc_cards.html' %}
 
             </div>
 
-        </div>
-    </section>
-    <section x-data="{show_delete: false}">
+            <section class="collapsible">
 
-        <div class="option-box flex flex-col gap-4">
-            <strong class="text-red-700">DANGER ZONE</strong>
-
-            <p>Deleting the quest will delete everything attached to the quest, and there's no undoing this.</p>
-
-            <div class="mt-2">
-                <button type="button"
-                        class="btn danger"
-                        x-show="!show_delete"
-                        @click="show_delete = true">Delete Quest
-                </button>
-                <button type="button"
+                <button @click="section_quest = !section_quest"
                         class="btn"
-                        x-show="show_delete"
-                        @click="show_delete = false">Cancel Delete
+                        :class="section_quest ? 'open' : 'closed'">
+                    <span x-text="`Quest: ${title}`"></span>
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_quest"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_quest"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
                 </button>
-                <a x-cloak
-                   x-show="show_delete"
-                   @click.outside="show_delete = false"
-                   class="btn danger"
-                   href="{{ url_for('quest.delete', quest_id=q_quest.quest_id) }}">
-                    Confirm Delete
-                </a>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_quest">
+
+
+                    <form action="{{ url_for('quest.edit', quest_id=quest.quest_id, var='edit') }}"
+                          method="post"
+                          class="form-box slim">
+
+                        <input type="hidden" name="title" x-model="title">
+                        <input type="hidden" name="summary" x-model="summary">
+                        <input type="hidden" name="fk_genre_id" x-model="genre_id">
+
+                        <label for="fk_genre_id">Genre</label>
+                        <select id="fk_genre_id"
+                                x-model="genre_id"
+                                @change="setGenre()"
+                                required>
+                            <option value="0">Select...</option>
+                            <template x-for="g in genres">
+                                <option :value="g.genre_id"
+                                        :selected="g.genre_id === genre_id"
+                                        x-text="`${g.genre} - ${g.description}`"
+                                ></option>
+                            </template>
+                        </select>
+
+                        <label for="title">Title</label>
+                        <input type="text" id="title" x-model="title" required>
+
+                        <label for="summary">Summary</label>
+                        <textarea id="summary" cols="30" rows="5"
+                                  x-model="summary"></textarea>
+
+                        <button type="submit" class="btn confirm">Save</button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            {% include 'quest/includes/arc_cards.html' %}
+            {% include 'quest/includes/np_arc_cards.html' %}
+
+        </div>
+
+    </section>
+
+    <section class="slim" x-data="{show_delete: false}">
+        <div>
+            <button class="btn danger" @click="show_delete = true">Delete Quest</button>
+        </div>
+        <div x-cloak x-show="show_delete">
+            <div class="inner-option-box gap-6">
+                <strong class="font-bold text-red-700">DANGER ZONE</strong>
+                <p>Deleting the quest will delete everything attached to the quest, and there's no undoing this.</p>
+
+                <p>Are you sure you want to delete this quest?</p>
+
+                <div class="flex gap-2">
+                    <button class="btn w-48" @click="show_delete = false" x-cloak x-show="show_delete">No
+                    </button>
+                    <a class="btn danger" href="{{ url_for('quest.delete', quest_id=quest.quest_id) }}">
+                        Yes, Delete</a>
+                </div>
+
             </div>
         </div>
 

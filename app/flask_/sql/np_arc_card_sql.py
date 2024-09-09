@@ -180,7 +180,7 @@ def update_np_arc_card(
     return result
 
 
-def delete_np_arc_card(np_arc_card_id) -> int:
+def delete_by_id(np_arc_card_id) -> int:
     sql = (
         delete(NPArcCard)
         .where(NPArcCard.np_arc_card_id == np_arc_card_id)
@@ -190,3 +190,15 @@ def delete_np_arc_card(np_arc_card_id) -> int:
     db.session.commit()
 
     return np_arc_card_id
+
+
+def delete_by_quest_id(quest_id) -> int:
+    sql = (
+        delete(NPArcCard)
+        .where(NPArcCard.fk_quest_id == quest_id)
+    )
+
+    db.session.execute(sql)
+    db.session.commit()
+
+    return quest_id

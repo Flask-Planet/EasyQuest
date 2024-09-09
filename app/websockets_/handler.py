@@ -3,7 +3,7 @@ import json
 import websockets
 from loguru import logger
 
-from app.websockets_ import CONNECTIONS, AUTHENTICATED
+from app.websockets_ import CONNECTIONS, AUTHENTICATED, CONNECTION_LOOKUP
 from .actions import disconnect_user, send_to_user_in_quest, broadcast_to_quest, authenticate, get_data
 from .utilities import get_quest_code_from_path
 
@@ -42,7 +42,7 @@ async def handler(connection):
 
         if "system" in connection.path:
             if connection.remote_address[0] in ["127.0.0.1", "::1"]:
-                logger.opt(colors=True).info(f"<green>System Connection >>> Auto Authenticate</green>")
+                logger.opt(colors=True).info("<green>System Connection >>> Auto Authenticate</green>")
                 AUTHENTICATED.add(connection)
         else:
             logger.info(f"{connection.remote_address[0]}: Connection established - [{connection.path}]")
@@ -76,9 +76,13 @@ async def handler(connection):
         # Connection is already authenticated
         if connection in AUTHENTICATED:
 
+            logger.info(f"{ip_address}: User [{user_id}] is authenticated")
+
+            logger.info(f"Connection lookup: {CONNECTION_LOOKUP}")
+
             # broadcast to everyone in the quest
             if action == "broadcast_to_quest":
-                await broadcast_to_quest(quest_code, data, ip_address)
+                await broadcast_to_quest(user_id, quest_code, data, ip_address)
 
             # send to user
             if action == "send_to_user_in_quest":
@@ -106,7 +110,7 @@ async def handler(connection):
 
     except websockets.exceptions.ConnectionClosedOK:
         if "system" in connection.path:
-            logger.opt(colors=True).info(f"<red>System Connection >>> Connection Closed</red>")
+            logger.opt(colors=True).info("<red>System Connection >>> Connection Closed</red>")
         else:
             logger.info(f"{connection.remote_address[0]}: Connection closed")
         pass

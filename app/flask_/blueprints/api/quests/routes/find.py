@@ -13,17 +13,17 @@ def find(quest_code):
 
     user_id = session.get("user_id")
 
-    q_quest = quest_sql.get_by_quest_code(quest_code)
+    quest = quest_sql.get_by_quest_code(quest_code)
 
-    if not q_quest:
+    if not quest:
         return APIResponse.fail(
             "Quest not found",
             {}
         )
 
-    q_joined = quest_purgatory_sql.get_joined(user_id, q_quest.quest_id)
+    joined = quest_purgatory_sql.get_joined(user_id, quest.quest_id)
 
-    if q_joined:
+    if joined:
         return APIResponse.fail(
             "You have already requested to join this quest",
             {}
@@ -32,13 +32,14 @@ def find(quest_code):
     return APIResponse.success(
         'Quest found',
         {
-            'quest_id': q_quest.quest_id,
-            'quest_code': q_quest.quest_code,
-            'title': q_quest.title,
-            'summary': q_quest.summary,
-            'genre': q_quest.rel_genre.genre,  # 2 LEVEL DEEP RELATIONSHIP
-            'building': q_quest.building,
-            'live': q_quest.live,
-            'finished': q_quest.finished,
+            'quest_id': quest.quest_id,
+            'genre_id': quest.fk_genre_id,
+            'quest_code': quest.quest_code,
+            'title': quest.title,
+            'summary': quest.summary,
+            'genre': quest.rel_genre.genre,
+            'building': quest.building,
+            'live': quest.live,
+            'finished': quest.finished,
         }
     )

@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request
-from flask_imp.security import login_check, permission_check
+from flask_imp.security import login_check
 
 from app.flask_.models.quest import Quest
 from app.flask_.sql import arc_card_sql
@@ -8,7 +8,6 @@ from .. import bp
 
 @bp.route("/<int:quest_id>/arc-card/<int:arc_card_id>/edit", methods=["GET", "POST"])
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permission_level', 10, 'www.index')
 def edit_arc_card(quest_id, arc_card_id):
     #
     # POST

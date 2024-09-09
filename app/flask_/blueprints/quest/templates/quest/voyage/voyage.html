@@ -1,5 +1,5 @@
 {% extends "extends/main.html" %}
-{% block title %}Quests - {{ q_quest.title }}{% endblock %}
+{% block title %}Quests - {{ quest.title }}{% endblock %}
 
 {% block alpinejs_page_data %}
     <script>
@@ -7,23 +7,55 @@
             Alpine.data('quest_voyage', () => ({
 
                 socket: null,
+                reconnect_attempts: 0,
+                leaving: false,
 
                 user_id: '{{ session.get("user_id") }}',
+                private_key: '{{ private_key }}',
 
-                quest_id: {{ q_quest.quest_id }},
-                quest_code: '{{ q_quest.quest_code }}',
-                title: '{{ q_quest.title }}',
-                genre: '{{ q_quest.rel_genre.genre }}',
-                summary: '{{ q_quest.summary }}',
+                quest_id: {{ quest.quest_id }},
+                quest_code: '{{ quest.quest_code }}',
+                title: '{{ quest.title }}',
+                genre: '{{ quest.rel_genre.genre }}',
+                summary: '{{ quest.summary }}',
 
-                building: {{ q_quest.building|string|lower }},
-                live: {{ q_quest.live|string|lower }},
-                finished: {{ q_quest.finished|string|lower }},
+                character: {
+                    character_id: {{character.character_id}},
+                    full_name: '{{character.full_name}}',
+                    back_story: '{{character.back_story}}',
+                    display_picture: '{{character.display_picture}}',
+                    arc: '{{character.arc}}',
+                    description: '{{character.description}}',
+                    modifier: '{{character.modifier}}',
+                    bonus: '{{character.bonus}}',
+                    weapon_name: '{{character.weapon_name}}',
+                    weapon_damage: {{character.weapon_damage}},
+                    health: {{character.health}},
+                    current_health: {{character.current_health}},
+                    defence: {{character.defence}},
+                    strength: {{character.strength}},
+                    agility: {{character.agility}},
+                    intelligence: {{character.intelligence}},
+                    luck: {{character.luck}},
+                    perception: {{character.perception}},
+                    persuasion: {{character.persuasion}},
+                    sleeping: {{character.sleeping|string|lower}},
+                    confused: {{character.confused|string|lower}},
+                    poisoned: {{character.poisoned|string|lower}},
+                    buffed: {{character.buffed|string|lower}},
+                },
 
-                section_join_requests: false,
-                section_characters: false,
-                section_np_characters: false,
-                section_locations: false,
+                gold: {{character.gold}},
+                inventory: {{character.inventory|safe}},
+
+                health_percentage: 0,
+                health_bar_class: 0,
+
+                section_quest: false,
+                section_how_to_play: false,
+                section_character: false,
+                section_location: false,
+                section_encounter: false,
 
                 wsConnect() {
                     this.socket = new WebSocket('{{ ws_uri }}')
@@ -32,17 +64,31 @@
 
                 wsAuthenticate() {
                     this.socket.send(JSON.stringify({
-                        'user_id': '{{ session.get("user_id") }}',
-                        'private_key': '{{ private_key }}',
+                        'user_id': this.user_id,
+                        'private_key': this.private_key,
                         'action': 'authenticate'
                     }))
+
+                    if (this.reconnect_attempts === 0) {
+                        // Only send if the connection was not lost
+                        this.broadcastEnterVoyage()
+                    }
                 },
 
                 wsEvents() {
                     this.socket.onopen = (event) => {
                         console.log('WebSocket is connected')
+
                         this.wsAuthenticate()
-                        this.getJoinRequests()
+
+                        if (this.reconnect_attempts > 0) {
+                            Alpine.store('body').showMessage(
+                                'Reconnected!',
+                                'good'
+                            )
+                            this.reconnect_attempts = 0
+                        }
+
                     }
 
                     this.socket.onmessage = (event) => {
@@ -64,18 +110,159 @@
 
                     this.socket.onclose = (event) => {
                         console.log('WebSocket is closed now.')
+
+                        if (!this.leaving) {
+
+                            Alpine.store('body').showMessage(
+                                'Connection to the server has been lost!',
+                                'bad'
+                            )
+
+                            if (this.reconnect_attempts < 5) {
+                                this.reconnect_attempts++
+                                setTimeout(() => {
+                                    Alpine.store('body').showMessage(
+                                        'Reconnecting...',
+                                        'bad'
+                                    )
+                                    this.wsConnect()
+                                }, 1000)
+                            }
+
+                        }
+
                     }
                 },
 
                 wsSend() {
                     this.socket.send(JSON.stringify({
-                        'type': 'message',
-                        'message': 'Hello, World!'
+                        'user_id': this.user_id,
+                        'private_key': this.private_key
                     }))
+                },
+
+                broadcastEnterVoyage() {
+                    this.socket.send(JSON.stringify({
+                        'user_id': this.user_id,
+                        'private_key': this.private_key,
+                        'action': 'broadcast_to_quest',
+                        'data': {
+                            'message': `${this.character.full_name} has joined the voyage!`,
+                            'message_status': 'good'
+                        }
+                    }))
+                },
+
+                broadcastLeaveVoyage() {
+                    this.leaving = true
+                    this.socket.send(JSON.stringify({
+                        'user_id': this.user_id,
+                        'private_key': this.private_key,
+                        'action': 'broadcast_to_quest',
+                        'data': {
+                            'message': `${this.character.full_name} left the voyage, and returned to purgatory.`,
+                            'message_status': 'bad'
+                        }
+                    }))
+                    setTimeout(
+                        () => {
+                            window.location.href = `/quest/${this.quest_code}/purgatory`
+                        },
+                        1000
+                    )
+                },
+
+                calculateHealthPercentage() {
+                    if (this.character.current_health === this.character.health) {
+                        this.health_percentage = 100;
+                        return;
+                    }
+                    this.health_percentage = (
+                        this.character.current_health /
+                        this.character.health
+                    ) * 100;
+                },
+
+                healthBarClass() {
+                    if (this.health_percentage < 40) {
+                        this.health_bar_class = 'low';
+                        return 'low';
+                    }
+                    if (this.health_percentage >= 40 && this.health_percentage < 70) {
+                        this.health_bar_class = 'medium';
+                        return 'medium';
+                    }
+                    if (this.health_percentage >= 70) {
+                        this.health_bar_class = 'high';
+                        return 'high';
+                    }
+                },
+
+                increaseHealthSlowly(new_health) {
+                    let nh = parseInt(new_health);
+
+                    if (nh > this.character.health) {
+                        nh = this.character.health;
+                    }
+
+                    let _interval = setInterval(() => {
+                        if (nh > this.character.current_health) {
+
+                            if (this.character.current_health === this.character.health) {
+                                clearInterval(_interval);
+                                return;
+                            }
+
+                            this.character.current_health += 1;
+                            this.calculateHealthPercentage();
+                            this.healthBarClass();
+
+                        } else {
+
+                            clearInterval(_interval);
+
+                        }
+
+                    }, 10);
+
+                },
+
+                decreaseHealthSlowly(new_health) {
+                    let nh = parseInt(new_health);
+
+                    if (nh < 0) {
+                        nh = 0;
+                    }
+
+                    let _interval = setInterval(() => {
+                        if (nh < this.character.current_health) {
+
+                            this.character.current_health -= 1;
+                            this.calculateHealthPercentage();
+                            this.healthBarClass();
+
+                        } else {
+
+                            clearInterval(_interval);
+
+                        }
+                    }, 10);
+
+                },
+
+                setNewHealth(new_health) {
+                    let nh = parseInt(new_health);
+                    if (nh > this.character.current_health) {
+                        self.increaseHealthSlowly(nh);
+                    } else {
+                        self.decreaseHealthSlowly(nh);
+                    }
                 },
 
                 init() {
                     this.wsConnect()
+                    this.calculateHealthPercentage();
+                    this.healthBarClass();
                 }
 
             }))
@@ -87,131 +274,156 @@
 
 {% block container %}
 
-    <section x-data="quest_voyage" class="slim">
+    <div x-data="quest_voyage">
 
-        <div class="inner-option-box">
-            <h1 class="text-xl">{{ q_quest.title }}</h1>
-            <p><strong>Quest Code: </strong>{{ q_quest.quest_code }}</p>
-        </div>
+        <section class="slim">
 
-        <section class="collapsible">
+            <section class="collapsible">
 
-            <button @click="section_join_requests = !section_join_requests" class="btn">
-                <span>Join Requests (<span x-text="join_requests.length"></span>)</span>
+                <button @click="section_quest = !section_quest"
+                        class="btn"
+                        :class="section_quest ? 'open' : 'closed'">
+                    <span>Quest: {{ quest.title }}</span>
 
-                <img width="12"
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_quest"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_quest"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
                      x-cloak
-                     x-show="!section_join_requests"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_join_requests"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
+                     x-show="section_quest">
 
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_join_requests">
-
-                <template x-for="jr in join_requests">
-
-                    <div class="inner-option-box-min flex justify-between items-center">
-                        <div>
-                            <div>Name: <span x-text="jr.first_name"></span></div>
-                            <div>Email: <span x-text="jr.email_address"></span></div>
-                        </div>
-                        <div>
-                            <button class="btn confirm">Accept</button>
-                            <button class="btn danger">Block</button>
-                        </div>
+                    <div class="inner-option-box">
+                        <h1 class="text-2xl">{{ quest.title }}</h1>
+                        <p class="mb-3">{{ quest.summary }}</p>
+                        <p>Genre: <strong>{{ quest.rel_genre.genre }}</strong></p>
+                        <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
                     </div>
 
-                </template>
+                </div>
 
-            </div>
+            </section>
+
+
+            <section class="collapsible">
+
+                <button @click="section_character = !section_character"
+                        class="btn"
+                        :class="section_character ? 'open' : 'closed'">
+                    <span>Character: <span x-text="character.full_name"></span></span>
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_character"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_character"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_character">
+
+                    {% include 'quest/voyage/character.html' %}
+
+                </div>
+
+            </section>
+
+            <section class="collapsible">
+                <button @click="section_location = !section_location"
+                        class="btn"
+                        :class="section_location ? 'open' : 'closed'">
+                    <span>Current Location</span>
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_location"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_location"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_location">
+                </div>
+
+            </section>
+
+            <section class="collapsible">
+                <button @click="section_how_to_play = !section_how_to_play"
+                        class="btn"
+                        :class="section_how_to_play ? 'open' : 'closed'">
+                    <span>How to Play</span>
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_how_to_play"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_how_to_play"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_how_to_play">
+
+                    {% include 'quest/includes/hot-to-play.html' %}
+
+                </div>
+
+            </section>
 
         </section>
 
-        <section class="collapsible">
+        <section class="slim" x-data="{show_leave: false}">
+            <div class="flex gap-2">
+                <button class="btn warning w-48" @click="show_leave = true">Purgatory</button>
+            </div>
+            <div x-cloak x-show="show_leave">
+                <div class="inner-option-box gap-6">
 
-            <button @click="section_characters = !section_characters" class="btn">
-                Characters
+                    <p>Are you sure you want to leave the voyage?</p>
 
-                <img width="12"
-                     x-cloak
-                     x-show="!section_characters"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_characters"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
+                    <div class="flex gap-2">
 
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_characters">
+                        <button class="btn w-48" @click="show_leave = false">No</button>
+                        <button class="btn confirm" @click="broadcastLeaveVoyage()">Yes, leave
+                        </button>
 
+                    </div>
+
+                </div>
+            </div>
+            <div x-cloak x-show="leaving">
+
+                <div class="inner-option-box gap-6">
+                    <p>Returning to purgatory...</p>
+                </div>
 
             </div>
-
         </section>
 
-        <section class="collapsible">
-
-            <button @click="section_np_characters = !section_np_characters" class="btn">
-                Non-Playable Characters
-
-                <img width="12"
-                     x-cloak
-                     x-show="!section_np_characters"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_np_characters"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_np_characters">
-
-
-            </div>
-
-        </section>
-
-        <section class="collapsible">
-
-            <button @click="section_locations = !section_locations" class="btn">
-                Locations
-
-                <img width="12"
-                     x-cloak
-                     x-show="!section_locations"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_locations"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_locations">
-
-
-            </div>
-
-        </section>
-
-    </section>
-
+    </div>
 {% endblock %}

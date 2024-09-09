@@ -1,10 +1,10 @@
+from flask import Flask
+from sqlalchemy.exc import OperationalError
+
 from app.flask_.config import flask_config, imp_config
 from app.flask_.extensions import imp, db
 from app.flask_.first_run import first_run
 from app.flask_.models import System
-from flask import Flask
-
-from sqlalchemy.exc import OperationalError
 
 
 def create_app():

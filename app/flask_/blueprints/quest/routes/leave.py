@@ -1,5 +1,5 @@
 from flask import redirect, url_for, flash, session
-from flask_imp.security import login_check, permission_check
+from flask_imp.security import login_check
 
 from app.flask_.services import WebSocketService
 from app.flask_.sql import quest_sql, quest_purgatory_sql, character_join_request_sql, character_sql

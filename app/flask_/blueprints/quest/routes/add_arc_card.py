@@ -10,7 +10,6 @@ from .. import bp
 
 @bp.route("/<int:quest_id>/arc-card/add", methods=["GET", "POST"])
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permission_level', 10, 'www.index')
 def add_arc_card(quest_id):
     #
     # POST

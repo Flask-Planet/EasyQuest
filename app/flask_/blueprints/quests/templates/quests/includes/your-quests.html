@@ -1,25 +1,31 @@
 <section class="header">
     <small>Your Quests</small>
 </section>
-<section class="bordered" x-data>
+<section class="bordered">
 
     <div class="quests">
         {% for quest in users_quests %}
-            <div class="quest-card">
+            <div class="quest-card" x-data>
 
-                <div class="flex flex-col gap-4">
-
-                    <div class="inner-option-box">
-                        <h2>{{ quest.title }}</h2>
-                        <p>{{ quest.summary }}</p>
-                    </div>
-                    <div class="inner-option-box">
-                        <p>Genre: <strong>{{ quest.rel_genre.genre or "Genre Not Selected" }}</strong></p>
-                        <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
-                    </div>
+                <div :style="$store.body.genreBackground({{ quest.fk_genre_id }})" class="h-44 w-full rounded-md">
 
                 </div>
 
+                <div class="inner-option-box">
+                    <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
+                    <p>Genre: <strong>{{ quest.rel_genre.genre or "Genre Not Selected" }}</strong></p>
+
+                    <h2 class="mt-3 font-bold">{{ quest.title }}</h2>
+                    <p class="mb-3">{{ quest.summary|truncate(80) }}
+                        {% if quest.summary|length > 79 %}
+                            <a @click="setShowMore(
+                        $store.body.genreBackground({{ quest.fk_genre_id }}),
+                        '{{ quest.title }}',
+                        '{{ quest.summary }}'
+                        )" class="text-blue-400 cursor-pointer">read&nbsp;more</a>
+                        {% endif %}
+                    </p>
+                </div>
 
                 <div class="flex flex-col gap-2">
 

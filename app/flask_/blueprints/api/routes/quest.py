@@ -95,7 +95,7 @@ def quest_edit_update_arc_cards(arc_card_id):
 @login_check('authenticated', True, 'auth.login')
 @permission_check('permission_level', 10, 'www.index')
 def quest_edit_delete_arc_card(arc_card_id):
-    arc_card_sql.delete_arc_card(arc_card_id)
+    arc_card_sql.delete_by_id(arc_card_id)
 
     return APIResponse.success(
         "Arc Card Created",

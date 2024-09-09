@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session
 from flask_imp.auth import generate_alphanumeric_validator
-from flask_imp.security import login_check, permission_check
+from flask_imp.security import login_check
 
 from app.flask_.models.genre import Genre
 from app.flask_.models.quest import Quest
@@ -10,7 +10,6 @@ from .. import bp
 
 @bp.route("/add", methods=["GET", "POST"])
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permission_level', 10, 'www.index')
 def add():
     # POST
     if request.method == "POST":
@@ -45,8 +44,18 @@ def add():
         return redirect(url_for("quest.edit", quest_id=new_quest.quest_id))
 
     # GET
-    q_genres = Genre.read(all_rows=True, order_by="created")
+    genres = Genre.read(all_rows=True, order_by="created")
+
+    genres_json = [
+        {
+            "genre_id": genre.genre_id,
+            "genre": genre.genre,
+            "description": genre.description
+        }
+        for genre in genres
+    ]
+
     return render_template(
         bp.tmpl("add.html"),
-        q_genres=q_genres,
+        genres=genres_json,
     )

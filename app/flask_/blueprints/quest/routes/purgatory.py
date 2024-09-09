@@ -13,22 +13,22 @@ def purgatory(quest_code):
 
     This gives them character creation options and a chance to read the quest
     """
-    q_quest = quest_sql.get_by_quest_code(quest_code)
+    quest = quest_sql.get_by_quest_code(quest_code)
 
     user_id = session.get("user_id")
     user_name = session.get("user_name")
 
-    if not q_quest:
+    if not quest:
         flash("Quest not found", "bad")
         return redirect(url_for("quests.index"))
 
-    if q_quest.fk_user_id == user_id:
+    if quest.fk_user_id == user_id:
         flash("You are the owner of this quest, you must join as a quest master!", "bad")
         return redirect(url_for("quests.index"))
 
     return render_template(
         bp.tmpl("purgatory/purgatory.html"),
-        q_quest=q_quest,
+        quest=quest,
         user_id=user_id,
         user_name=user_name
     )

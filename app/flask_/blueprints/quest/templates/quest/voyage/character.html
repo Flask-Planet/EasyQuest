@@ -1,0 +1,227 @@
+<div class="character-cards">
+
+    <div class="character-card">
+
+        <div class="character-card-sections">
+
+            <div class="character-arc-effects-section">
+                {# CHARACTER #}
+                <div class="inner-option-box-min flex flex-col">
+                    <small>Character</small>
+                    <h3 class="text-2xl mb-3" x-text="character.full_name"></h3>
+                    <p x-text="character.back_story"></p>
+                </div>
+                {# ARC #}
+                <div class="inner-option-box-min flex flex-col">
+                    <small>Arc</small>
+                    <h3 class="text-2xl mb-3" x-text="character.arc"></h3>
+
+                    <p x-text="character.description"></p>
+                </div>
+                {# MODIFIER #}
+                <div class="inner-option-box-min" x-cloak x-show="character.modifier">
+                    <div class="flex items-center gap-1">
+                        <img class="character-stat-icon"
+                             src="{{ url_for('static', filename='icons/modifier.svg') }}"
+                             alt="Modifier">
+                        <small>Modifier</small>
+                    </div>
+
+                    <div class="character-stat">
+                        <p class="px-2" x-text="character.modifier"></p>
+                    </div>
+                </div>
+                {# BONUS #}
+                <div class="inner-option-box-min" x-cloak x-show="character.bonus">
+
+                    <div class="flex items-center gap-1">
+
+                        <img class="character-stat-icon"
+                             src="{{ url_for('static', filename='icons/bonus.svg') }}"
+                             alt="Bonus">
+                        <small>Bonus</small>
+
+                    </div>
+
+                    <div class="character-stat">
+                        <p class="px-2" x-text="character.bonus"></p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="character-health-weapon-defence-stats-section">
+                {# HEALTH + DEFENSE #}
+                <div class="inner-option-box-min">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <div class="flex items-center gap-2 mb-1">
+
+                                <img class="character-stat-icon"
+                                     src="{{ url_for('static', filename='icons/health.svg') }}"
+                                     alt="Health">
+                                <small>Health</small>
+
+                            </div>
+
+                            <div>
+                                (
+                                <small x-text="character.current_health"></small>
+                                / <small x-text="character.health"></small>
+                                )
+                            </div>
+                        </div>
+
+                        <div class="character-health">
+
+                            <div :class="health_bar_class"
+                                 :style="'width: ' + health_percentage + '%'">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/defence.svg') }}"
+                                 alt="Defence">
+                            <small>Defence</small>
+                        </div>
+
+                        <div class="pill pill-defence" x-text="character.defence"></div>
+                    </div>
+
+                </div>
+                {# WEAPON #}
+                <div class="inner-option-box-min">
+                    <small>Starting Weapon</small>
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/weapon.svg') }}"
+                                 alt="Weapon">
+                            <small x-text="character.weapon_name"></small>
+                        </div>
+
+                        <div class="pill pill-attack" x-text="character.weapon_damage"></div>
+                    </div>
+                </div>
+                {# STATS #}
+                <div class="inner-option-box-min">
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/strength.svg') }}"
+                                 alt="Strength">
+                            <small>Strength</small>
+                        </div>
+
+                        <div class="pill" x-text="character.strength"></div>
+                    </div>
+
+
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/agility.svg') }}"
+                                 alt="Agility">
+                            <small>Agility</small>
+                        </div>
+
+                        <div class="pill" x-text="character.agility"></div>
+                    </div>
+
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/intelligence.svg') }}"
+                                 alt="Intelligence">
+                            <small>Intelligence</small>
+                        </div>
+
+                        <div class="pill" x-text="character.intelligence"></div>
+                    </div>
+
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/luck.svg') }}"
+                                 alt="Luck">
+                            <small>Luck</small>
+                        </div>
+
+                        <div class="pill" x-text="character.luck"></div>
+                    </div>
+
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/perception.svg') }}"
+                                 alt="Perception">
+                            <small>Perception</small>
+                        </div>
+
+                        <div class="pill" x-text="character.perception"></div>
+                    </div>
+
+                    <div class="character-stat">
+                        <div>
+                            <img class="character-stat-icon"
+                                 src="{{ url_for('static', filename='icons/persuasion.svg') }}"
+                                 alt="Persuasion">
+                            <small>Persuasion</small>
+                        </div>
+
+                        <div class="pill" x-text="character.persuasion"></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        {# GOLD + INVENTORY #}
+        <div class="inner-option-box-min flex flex-col gap-2">
+
+            <div class="flex flex-col gap-2">
+
+                <div class="flex items-center gap-1 mb-2">
+                    <img class="character-stat-icon"
+                         src="{{ url_for('static', filename='icons/inventory.svg') }}"
+                         alt="Inventory">
+                    <small>Inventory</small>
+                </div>
+
+                <div class="inner-option-box-min-nw place-self-start
+                    flex align-middle gap-3 p-2 bg-blue-950">
+                    <div class="flex items-center gap-1">
+                        <img class="character-stat-icon"
+                             src="{{ url_for('static', filename='icons/gold.svg') }}"
+                             alt="Gold">
+                        <small>Gold</small>
+                    </div>
+                    <div class="pill pill-gold" x-text="gold"></div>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <template x-for="item in inventory">
+                        <div class="inner-option-box-min-nw place-self-start max-w-96">
+                            <p class="text-sm" x-text="item.name"></p>
+                            <small x-text="item.description"></small>
+                        </div>
+                    </template>
+                    <template x-for="item in [1,2,3,4,5,6,7,8,9]">
+                        <div class="inner-option-box-min-nw place-self-start max-w-96">
+                            <p class="text-sm">Test</p>
+                            <small>Test item description...</small>
+                        </div>
+                    </template>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

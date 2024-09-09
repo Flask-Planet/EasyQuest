@@ -1,0 +1,117 @@
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('body', {
+
+            init() {
+                console.log("Alpine store body initialized")
+            },
+
+            dialog: false,
+            message_count: 0,
+            messages: {},
+
+            showMessage(msg, status = 'message') {
+
+                const index = this.message_count
+
+                const timeout = setTimeout(() => {
+                    this.removeMessage(index)
+                }, 10000)
+
+                this.messages[index] = {
+                    message: msg,
+                    status: status,
+                    timeout: timeout
+                }
+
+                this.message_count += 1
+
+            },
+
+            removeMessage(index) {
+                if (this.messages[index].timeout) {
+                    clearTimeout(this.messages[index].timeout)
+                }
+                delete this.messages[index]
+            },
+
+            clearMessageTimeout(index) {
+                if (this.messages[index].timeout) {
+                    clearTimeout(this.messages[index].timeout)
+                }
+            },
+
+            genreBackground(genre_id) {
+                const base_styles = {
+                    'background-size': 'cover',
+                    'background-position': 'center',
+                    'background-repeat': 'no-repeat',
+                }
+                switch (genre_id) {
+                    case 1:
+                        return {
+                            'background-image':
+                                'url("{{ url_for("static", filename="mythical-historic-fantasy.png") }}")',
+                            ...base_styles
+                        }
+                    case 2:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="cult-mystery.png") }}")',
+                            ...base_styles
+                        }
+                    case 3:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="zombie-apocalypse.png") }}")',
+                            ...base_styles
+                        }
+                    case 4:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="apocalypse.png") }}")',
+                            ...base_styles
+                        }
+                    case 5:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="crime-film-noir.png") }}")',
+                            ...base_styles
+                        }
+                    case 6:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="existential-horror.png") }}")',
+                            ...base_styles
+                        }
+                    case 7:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="dystopian-future.png") }}")',
+                            ...base_styles
+                        }
+                    case 8:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="mythic-folklore.png") }}")',
+                            ...base_styles
+                        }
+                    case 9:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="science-fiction.png") }}")',
+                            ...base_styles
+                        }
+                    default:
+                        return {
+                            'background-image': 'url("{{ url_for("static", filename="purgatory.png") }}")',
+                            ...base_styles
+                        }
+                }
+            },
+
+            showModal(id) {
+                document.getElementById(id).showModal()
+                this.dialog = true
+            },
+
+            closeModal(id) {
+                document.getElementById(id).close()
+                this.dialog = false
+            }
+
+        })
+    })
+</script>

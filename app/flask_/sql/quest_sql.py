@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 
 from app.flask_.extensions import db
 from app.flask_.models import Quest
@@ -52,3 +52,12 @@ def update_arc_cards(quest_id, arc_cards) -> Quest | None:
     )
 
     return db.session.execute(sql).scalar_one_or_none()
+
+
+def delete_by_id(quest_id) -> None:
+    sql = (
+        delete(Quest)
+        .where(Quest.quest_id == quest_id)
+    )
+    db.session.execute(sql)
+    db.session.commit()

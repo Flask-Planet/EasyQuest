@@ -4,9 +4,18 @@ body {
     font-family: 'Inter var', sans-serif;
 }
 
+body.dialog-open {
+    overflow: hidden;
+}
+
 ::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
     overscroll-behavior: contain;
+}
+
+.dark-background {
+    @apply w-full h-full;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .flash {
@@ -25,16 +34,17 @@ body {
 }
 
 dialog {
-    @apply relative z-10 overflow-hidden rounded-md;
+    @apply rounded-md;
     background: none;
-    min-width: 400px;
-    max-width: 1024px;
-    max-height: 600px;
-    overscroll-behavior: contain;
 }
 
 dialog > div {
-    @apply h-full w-full flex flex-col gap-4 p-8;
+    @apply flex flex-col flex-shrink-0 gap-4 p-8;
+    min-width: 400px;
+    max-width: 800px;
+    max-height: 600px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background-color: var(--dialog-bg-color);
     border: 1px solid var(--dialog-b-color);
     color: var(--dialog-color);
@@ -165,6 +175,11 @@ section.bordered {
     background-color: var(--option-box-min-bg);
 }
 
+.inner-option-box-min-nw {
+    @apply rounded-md p-2;
+    background-color: var(--option-box-min-bg);
+}
+
 .inner-option-box-stripped {
     @apply rounded-md w-full p-6;
     background-color: var(--body-bg-color-faint);
@@ -183,8 +198,19 @@ section.bordered {
 
 .form-box {
     @apply flex flex-col rounded-md w-full shadow-lg p-6;
+}
+
+.form-box-bg {
     background-color: var(--option-box-bg);
     border: 1px solid var(--option-box-b);
+}
+
+.form-box.none {
+    @apply shadow-none p-0;
+}
+
+.form-box.slim {
+    @apply shadow-none p-1;
 }
 
 .form-box label {
@@ -291,26 +317,19 @@ section.bordered {
 }
 
 .character-card-sections {
-    @apply grid grid-cols-3 gap-2;
+    @apply grid grid-cols-1 gap-2;
 }
 
+.character-arc-effects-section {
+    @apply w-full flex flex-col gap-2 order-1;
+}
 
-@media (max-width: 1200px) {
+.character-health-weapon-defence-stats-section {
+    @apply w-full flex flex-col gap-2 order-2;
+}
+
+@media (min-width: 1200px) {
     .character-card-sections {
-        @apply grid-cols-2;
+        @apply grid grid-cols-2 gap-2;
     }
-}
-
-@media (max-width: 900px) {
-    .character-card-sections {
-        @apply grid-cols-1;
-    }
-}
-
-.character-card-arc-section {
-    @apply w-full;
-}
-
-.character-card-section {
-    @apply w-full flex flex-col gap-2;
 }

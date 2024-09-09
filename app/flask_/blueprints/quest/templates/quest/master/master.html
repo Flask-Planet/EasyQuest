@@ -8,8 +8,10 @@
             Alpine.data('quest_master', () => ({
 
                 socket: null,
+                reconnect_attempts: 0,
 
                 user_id: '{{ session.get("user_id") }}',
+                private_key: '{{ private_key }}',
 
                 quest_id: {{ q_quest.quest_id }},
                 quest_code: '{{ q_quest.quest_code }}',
@@ -37,8 +39,8 @@
 
                 wsAuthenticate() {
                     this.socket.send(JSON.stringify({
-                        'user_id': '{{ session.get("user_id") }}',
-                        'private_key': '{{ private_key }}',
+                        'user_id': this.user_id,
+                        'private_key': this.private_key,
                         'action': 'authenticate'
                     }))
                 },
@@ -46,6 +48,15 @@
                 wsEvents() {
                     this.socket.onopen = (event) => {
                         console.log('WebSocket is connected')
+
+                        if (this.reconnect_attempts > 0) {
+                            Alpine.store('body').showMessage(
+                                'Reconnected!',
+                                'good'
+                            )
+                            this.reconnect_attempts = 0
+                        }
+
                         this.wsAuthenticate()
                         this.getJoinRequests()
                     }
@@ -75,7 +86,20 @@
                     }
 
                     this.socket.onclose = (event) => {
-                        console.log('WebSocket is closed now.')
+                        Alpine.store('body').showMessage(
+                            'Connection to the server has been lost!',
+                            'bad'
+                        )
+                        if (this.reconnect_attempts < 5) {
+                            this.reconnect_attempts++
+                            setTimeout(() => {
+                                Alpine.store('body').showMessage(
+                                    'Reconnecting...',
+                                    'bad'
+                                )
+                                this.wsConnect()
+                            }, 1000)
+                        }
                     }
                 },
 
@@ -138,7 +162,7 @@
             <button @click="section_quest = !section_quest"
                     class="btn"
                     :class="section_quest ? 'open' : 'closed'">
-                <span>Quest</span>
+                <span>Quest: {{ q_quest.title }}</span>
 
                 <img width="12"
                      x-cloak
@@ -158,9 +182,7 @@
 
                 <div class="inner-option-box">
                     <h1 class="text-2xl">{{ q_quest.title }}</h1>
-                    <p>{{ q_quest.summary }}</p>
-                </div>
-                <div class="inner-option-box">
+                    <p class="mb-3">{{ q_quest.summary }}</p>
                     <p>Genre: <strong>{{ q_quest.rel_genre.genre }}</strong></p>
                     <p>Quest Code: <strong>{{ q_quest.quest_code }}</strong></p>
                 </div>

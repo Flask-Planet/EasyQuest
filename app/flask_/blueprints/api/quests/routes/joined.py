@@ -26,9 +26,11 @@ def joined():
                 '__quest__': {
                     'purgatory_url': url_for('quest.purgatory', quest_code=quest.quest_code),
                     'quest_id': quest.quest_id,
+                    'genre_id': quest.fk_genre_id,
                     'quest_code': quest.quest_code,
                     'title': quest.title,
                     'summary': quest.summary,
+                    'summary_truncated': quest.summary[:80] + '...' if len(quest.summary) > 80 else quest.summary,
                     'genre': quest.rel_genre.genre,  # 2 LEVEL DEEP RELATIONSHIP
                     'building': quest.building,
                     'live': quest.live,

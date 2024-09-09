@@ -18,3 +18,7 @@
 .pill-attack {
     background-color: var(--pill-attack-bg);
 }
+
+.pill-gold {
+    background-color: var(--pill-gold-bg);
+}

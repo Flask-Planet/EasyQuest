@@ -20,13 +20,12 @@
             }))
         })
 
-
     </script>
 {% endblock %}
 
 
 {% block container %}
-    <section x-data="edit_np_arc_card">
+    <section class="slim" x-data="edit_np_arc_card">
 
         <form action="{{ url_for(
         'quest.edit_np_arc_card',
@@ -34,7 +33,7 @@
         np_arc_card_id=q_np_arc_card.np_arc_card_id
         ) }}"
               method="post"
-              class="form-box">
+              class="form-box none">
 
             <input type="hidden" name="defence" x-model="defence">
             <input type="hidden" name="strength" x-model="strength">

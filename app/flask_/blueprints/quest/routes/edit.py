@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request
-from flask_imp.security import login_check, permission_check
+from flask_imp.security import login_check
 
 from app.flask_.models.genre import Genre
 from app.flask_.models.quest import Quest
@@ -8,7 +8,6 @@ from .. import bp
 
 @bp.route("/<quest_id>/edit", methods=["GET", "POST"])
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permission_level', 10, 'www.index')
 def edit(quest_id):
     #
     # POST
@@ -33,16 +32,25 @@ def edit(quest_id):
     #
     # GET
     #
-    q_quest = Quest.read(id_=quest_id)
+    quest = Quest.read(id_=quest_id)
 
-    if not q_quest:
+    if not quest:
         flash("Quest not found", "bad")
         return redirect(url_for("quests.index"))
 
-    q_genres = Genre.read(all_rows=True, order_by="created")
+    genres = Genre.read(all_rows=True, order_by="created")
+
+    genres_json = [
+        {
+            "genre_id": genre.genre_id,
+            "genre": genre.genre,
+            "description": genre.description
+        }
+        for genre in genres
+    ]
 
     return render_template(
         bp.tmpl("edit.html"),
-        q_quest=q_quest,
-        q_genres=q_genres,
+        quest=quest,
+        genres=genres_json,
     )

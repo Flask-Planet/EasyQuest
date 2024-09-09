@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash
-from flask_imp.security import login_check, permission_check
+from flask_imp.security import login_check
 
 from app.flask_.models.character import Character
 from app.flask_.models.quest import Quest
@@ -8,7 +8,6 @@ from .. import bp
 
 @bp.get("/<quest_id>/character-manager")
 @login_check('authenticated', True, 'auth.login')
-@permission_check('permission_level', 10, 'www.index')
 def quest_character_manager(quest_id):
     q_quest = Quest.read(id_=quest_id)
 

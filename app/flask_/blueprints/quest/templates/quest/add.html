@@ -2,46 +2,96 @@
 {% block title %}Add Quest{% endblock %}
 
 
+{% block alpinejs_page_data %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('quest_add', () => ({
+
+                genre_id: 0,
+                title: '',
+                summary: '',
+
+                genre_name: null,
+
+                genres: {{ genres | tojson | safe }},
+
+                genre_background: null,
+
+                setGenre() {
+                    const parsed_genre = parseInt(this.genre_id)
+                    const genre = this.genres.find(g => g.genre_id === parsed_genre)
+                    this.genre_background = Alpine.store('body').genreBackground(parsed_genre)
+                    this.genre_name = genre ? genre.genre : '-'
+                },
+
+                init() {
+                    this.setGenre()
+                }
+
+            }))
+        })
+
+    </script>
+{% endblock %}
+
 {% block container %}
-    <section>
+    <section class="slim" x-data="quest_add">
+
+        <div class="flex flex-row justify-between gap-2">
+            <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
+                Cancel
+            </a>
+        </div>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+            <div class="inner-option-box order-2 md:order-1">
+                <p>Quest Code: <strong>-</strong></p>
+                <p>Genre: <strong x-text="genre_name ? genre_name : '-'"></strong></p>
+
+                <h2 class="mt-3 font-bold text-2xl" x-text="title ? title : '-'"></h2>
+                <p class="mb-3" x-text="summary ? summary : '-'"></p>
+            </div>
+
+            <div :style="genre_background" class="min-h-64 w-full rounded-md order-1 md:order-2">
+
+            </div>
+
+        </div>
 
 
         <form action="{{ url_for('quest.add') }}"
               method="post"
-              class="form-box"
-              x-data="{genre: 0, show_delete: false}">
+              class="form-box slim"
+              x-data="{show_delete: false}">
 
-            <div class="flex flex-row justify-between gap-2 mb-6">
-                <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
-                    Cancel
-                </a>
-                <button type="submit" class="btn confirm">Save Quest</button>
-            </div>
-
-            <label for="title">Title</label>
-            <input type="text" name="title" id="title" value="" required>
+            <input type="hidden" name="title" x-model="title">
+            <input type="hidden" name="summary" x-model="summary">
+            <input type="hidden" name="fk_genre_id" x-model="genre_id">
 
             <label for="fk_genre_id">Genre</label>
-            <select name="fk_genre_id" id="fk_genre_id" x-model="genre" required>
+            <select id="fk_genre_id"
+                    x-model="genre_id"
+                    @change="setGenre()"
+                    required>
                 <option value="0">Select...</option>
-                {% for genre in q_genres %}
-                    <option value="{{ genre.genre_id }}">
-                        {{ genre.genre }}
-                    </option>
-                {% endfor %}
+                <template x-for="g in genres">
+                    <option :value="g.genre_id"
+                            :selected="g.genre_id === genre_id"
+                            x-text="`${g.genre} - ${g.description}`"
+                    ></option>
+                </template>
             </select>
 
-            <div class="inner-option-box mb-4">
-                <small x-show="genre === 0" x-cloak>
-                    Select a quest genre...</small>
-                {% for genre in q_genres %}
-                    <small x-show="genre === '{{ genre.genre_id }}'" x-cloak>
-                        {{ genre.description }}</small>
-                {% endfor %}
-            </div>
+            <label for="title">Title</label>
+            <input type="text" id="title" x-model="title" required>
 
             <label for="summary">Summary</label>
-            <textarea name="summary" id="summary" cols="30" rows="5"></textarea>
+            <textarea id="summary" cols="30" rows="5"
+                      x-model="summary"></textarea>
+
+            <button type="submit" class="btn confirm">Add Quest</button>
 
         </form>
     </section>

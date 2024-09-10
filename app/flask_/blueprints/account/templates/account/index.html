@@ -9,6 +9,135 @@
 
                 show_delete: false,
 
+                email_address: '{{ user.email_address }}',
+                email_address_valid: false,
+                email_address_msg: null,
+                name_or_alias: null,
+                password: null,
+                confirm_password: null,
+                strength_msg: null,
+                passwords_match: true,
+                strength_bar: 0,
+                strength_bar_color: 'low',
+                button_enabled: false,
+
+                strength_msg_not_met:
+                    "Minimum password strength not met. Try adding at least one number, " +
+                    "one special character, and or one capital letter.",
+
+                init() {
+                    if (this.email_address) {
+                        this.checkEmail()
+                    } else {
+                        this.email_address_valid = true;
+                    }
+                },
+
+                checkPasswordStrength() {
+                    if (this.password) {
+
+                        let strength = 0;
+
+                        if (this.password.match(/[a-z]+/)) {
+                            strength += 1;
+                        }
+                        if (this.password.match(/[A-Z]+/)) {
+                            strength += 1;
+                        }
+                        if (this.password.match(/[0-9]+/)) {
+                            strength += 1;
+                        }
+                        if (this.password.match(/[$@#&!]+/)) {
+                            strength += 1;
+                        }
+
+                        if (this.password === "") {
+                            this.strength_msg = "Your password cannot be empty.";
+                            strength = 0
+                        }
+
+                        if (this.password.length < 8) {
+                            this.strength_msg = "Minimum number of characters is 8.";
+                            strength = 0
+                        } else {
+                            this.strength_msg = null;
+                        }
+
+                        switch (strength) {
+                            case 0:
+                                this.strength_bar = 5;
+                                this.strength_bar_color = 'low'
+                                if (this.strength_msg === null) {
+                                    this.strength_msg = this.strength_msg_not_met
+                                }
+                                break;
+
+                            case 1:
+                                this.strength_bar = 25;
+                                this.strength_bar_color = 'low'
+                                if (this.strength_msg === null) {
+                                    this.strength_msg = this.strength_msg_not_met
+                                }
+                                break;
+
+                            case 2:
+                                this.strength_bar = 50;
+                                this.strength_bar_color = 'medium'
+                                if (this.strength_msg !== null) {
+                                    this.strength_msg = null
+                                }
+                                break;
+
+                            case 3:
+                                this.strength_bar = 75;
+                                this.strength_bar_color = 'high'
+                                if (this.strength_msg !== null) {
+                                    this.strength_msg = null
+                                }
+                                break;
+
+                            case 4:
+                                this.strength_bar = 100;
+                                this.strength_bar_color = 'high'
+                                if (this.strength_msg !== null) {
+                                    this.strength_msg = null
+                                }
+                                break;
+                        }
+                    }
+                },
+
+                checkEmail() {
+                    this.email_address_valid
+                        = !!this.email_address.match(
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+                },
+
+                confirmPassword() {
+                    if (this.password !== ""
+                        && this.confirm_password !== "") {
+
+                        this.passwords_match
+                            = this.password
+                            === this.confirm_password;
+
+                    } else {
+                        this.passwords_match = false;
+                    }
+
+                    if (this.passwords_match === false) {
+                        this.strength_msg = "Passwords do not match.";
+                    } else {
+                        this.strength_msg = null;
+                    }
+
+                    this.button_enabled
+                        = this.passwords_match
+                        === true
+                        && this.strength_bar
+                        >= 50
+                },
+
             }))
         })
     </script>
@@ -32,9 +161,37 @@
                 <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" required>
 
                 <label for="email_address">Your Email Address</label>
-                <input type="email" name="email_address" id="email_address" value="{{ user.email_address }}" required>
+                <input type="email"
+                       name="email_address"
+                       id="email_address"
+                       @keydown.debounce.500ms="checkEmail()"
+                       x-model="email_address"
+                       required>
 
-                <button type="submit" class="btn confirm">Update Account</button>
+
+                <div class="inner-option-box-password-strength mb-3" x-cloak
+                     x-show="email_address_valid === false">
+                    <div class="flex items-center gap-2 p-2">
+                        <img width="18"
+                             src="{{ url_for('static', filename='icons/bad.svg') }}" alt="Error">
+                        <small>
+                            Looks like you've entered an invalid email address.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="inner-option-box-password-strength mb-3" x-cloak
+                     x-show="email_address_valid === true">
+                    <div class="flex items-center gap-2 p-2">
+                        <img width="18"
+                             src="{{ url_for('static', filename='icons/good.svg') }}" alt="Good">
+                        <small>
+                            Email address looks valid.
+                        </small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn confirm" :disabled="!email_address_valid">Update Account</button>
 
             </form>
         </div>
@@ -45,12 +202,47 @@
                   class="form-box none">
 
                 <label for="new_password">New Password</label>
-                <input type="password" id="new_password" value="" required>
+                <input type="password"
+                       id="new_password"
+                       name="new_password"
+                       x-model="password"
+                       @keydown.debounce.500ms="checkPasswordStrength()"
+                       placeholder="***********"
+                       required>
 
                 <label for="confirm_new_password">Confirm New Password</label>
-                <input type="password" id="confirm_new_password" value="" required>
+                <input type="password"
+                       id="confirm_new_password"
+                       name="confirm_new_password"
+                       x-model="confirm_password"
+                       @keydown.debounce.500ms="confirmPassword()"
+                       placeholder="***********"
+                       required>
 
-                <button type="submit" class="btn confirm">Update Password</button>
+                <div class="inner-option-box-password-strength mb-3">
+                    <div class="flex w-100 items-center gap-2 p-2">
+
+                        <small>Password&nbsp;Strength</small>
+
+                        <div class="character-health">
+                            <div
+                                    :class="strength_bar_color"
+                                    :style="{width: strength_bar + '%',
+                            'background-color': strength_bar_color}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div x-cloak x-show="strength_msg">
+                        <div class="flex items-center gap-2 p-2">
+                            <img width="18"
+                                 src="{{ url_for('static', filename='icons/bad.svg') }}" alt="Error">
+                            <small x-text="strength_msg"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn confirm" :disabled="!button_enabled">Update Password</button>
 
             </form>
         </div>

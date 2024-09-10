@@ -641,16 +641,6 @@ video {
   margin-bottom: 0.75rem;
 }
 
-.mx-3 {
-  margin-left: 0.75rem;
-  margin-right: 0.75rem;
-}
-
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
 .mb-0 {
   margin-bottom: 0px;
 }
@@ -733,6 +723,11 @@ video {
 
 .w-48 {
   width: 12rem;
+}
+
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 .w-full {
@@ -858,11 +853,6 @@ video {
   padding-bottom: 0.5rem;
 }
 
-.px-3 {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-}
-
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -950,10 +940,10 @@ video {
   --button-text: #ffffff;
   --button-bg-hover: #1a3045;
   --button-text-hover: #ffffff;
-  --button-fait-bg: rgba(23, 42, 60, 0.8);
-  --button-fait-b: rgba(23, 42, 60, 1);
+  --button-fait-bg: #20232b;
+  --button-fait-b: #223e59;
   --button-fait-text: #ffffff;
-  --button-fait-bg-hover: rgba(23, 42, 60, 1);
+  --button-fait-bg-hover: #282c35;
   --button-fait-text-hover: #ffffff;
   --button-confirm-bg: rgba(22, 76, 15, 0.7);
   --button-confirm-b: #195511;
@@ -1949,6 +1939,19 @@ textarea:focus {
 
 .pill-gold {
   background-color: var(--pill-gold-bg);
+}
+
+.d6-die {
+  display: flex;
+  height: 6rem;
+  width: 6rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.5rem;
+  padding: 1rem;
+  background-color: var(--option-box-bg);
+  border: 1px solid var(--option-box-b);
+  color: var(--body-text-color);
 }
 
 .character-stat-icon {

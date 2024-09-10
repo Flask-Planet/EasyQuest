@@ -57,6 +57,10 @@
                 section_location: false,
                 section_encounter: false,
 
+                die_roll: 1,
+                die_spins: 10,
+                die_interval: null,
+
                 wsConnect() {
                     this.socket = new WebSocket('{{ ws_uri }}')
                     this.wsEvents()
@@ -172,6 +176,18 @@
                     )
                 },
 
+                broadcastDieRoll() {
+                    this.socket.send(JSON.stringify({
+                        'user_id': this.user_id,
+                        'private_key': this.private_key,
+                        'action': 'broadcast_to_quest',
+                        'data': {
+                            'message': `{{ session.get('user_name') }} rolled a ${this.die_roll}!`,
+                            'message_status': 'good'
+                        }
+                    }))
+                },
+
                 calculateHealthPercentage() {
                     if (this.character.current_health === this.character.health) {
                         this.health_percentage = 100;
@@ -259,6 +275,23 @@
                     }
                 },
 
+                spinDie() {
+                    this.die_roll = Math.floor(Math.random() * 6) + 1;
+                },
+
+                throwDie() {
+                    for (let i = 0; i < 10; i++) {
+                        setTimeout(() => {
+                            this.spinDie();
+                        }, 90 * i);
+                        if (i === 9) {
+                            setTimeout(() => {
+                                this.broadcastDieRoll();
+                            }, 90 * i);
+                        }
+                    }
+                },
+
                 init() {
                     this.wsConnect()
                     this.calculateHealthPercentage();
@@ -277,6 +310,17 @@
     <div x-data="quest_voyage">
 
         <section class="slim">
+            <div class="inner-option-box-stripped">
+
+                <div class="flex flex-col justify-center gap-4 w-fit">
+                    <div class="d6-die">
+                    <img :src="`/static/icons/6d-${die_roll}.svg`"
+                         alt="D6">
+                        </div>
+                    <button class="btn w-full" @click="throwDie()">Roll d6</button>
+                </div>
+
+            </div>
 
             <section class="collapsible">
 

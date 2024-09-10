@@ -6,10 +6,10 @@
     --button-bg-hover: #1a3045;
     --button-text-hover: #ffffff;
 
-    --button-fait-bg: rgba(23, 42, 60, 0.8);
-    --button-fait-b: rgba(23, 42, 60, 1);
+    --button-fait-bg: #20232b;
+    --button-fait-b: #223e59;
     --button-fait-text: #ffffff;
-    --button-fait-bg-hover: rgba(23, 42, 60, 1);
+    --button-fait-bg-hover: #282c35;
     --button-fait-text-hover: #ffffff;
 
     --button-confirm-bg: rgba(22, 76, 15, 0.7);

@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template, redirect, url_for, flash, session
+from flask import render_template, redirect, url_for, flash, session, current_app
 from flask_imp.security import login_check
 
 from app.flask_.sql import quest_sql, user_sql
@@ -22,6 +22,6 @@ def master(quest_code):
     return render_template(
         bp.tmpl("master/master.html"),
         q_quest=q_quest,
-        ws_uri=f"{os.getenv('WS_URI')}/quest/{quest_code}/master",
+        ws_uri=f"{current_app.config['WS_URI']}/quest/{quest_code}/master",
         private_key=user.private_key,
     )

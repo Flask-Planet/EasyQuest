@@ -1,27 +1,241 @@
 {% extends "extends/main.html" %}
 {% block title %}Register{% endblock %}
-{% set temp_session = session.get("temp", {}) %}
 
+
+{% block alpinejs_page_data %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('auth_register', () => ({
+                register_email_address: '{{ email_address }}',
+                register_email_address_valid: false,
+                register_email_address_msg: null,
+                register_name_or_alias: null,
+                register_password: null,
+                register_confirm_password: null,
+                register_strength_msg: null,
+                register_passwords_match: true,
+                register_strength_bar: 0,
+                register_strength_bar_color: 'low',
+                register_button_enabled: false,
+
+                register_strength_msg_not_met:
+                    "Minimum password strength not met. Try adding at least one number, " +
+                    "one special character, and or one capital letter.",
+
+                init() {
+                    if (this.register_email_address) {
+                        this.checkEmail()
+                    } else {
+                        this.register_email_address_valid = true;
+                    }
+                },
+
+                checkPasswordStrength() {
+                    if (this.register_password) {
+
+                        let strength = 0;
+
+                        if (this.register_password.match(/[a-z]+/)) {
+                            strength += 1;
+                        }
+                        if (this.register_password.match(/[A-Z]+/)) {
+                            strength += 1;
+                        }
+                        if (this.register_password.match(/[0-9]+/)) {
+                            strength += 1;
+                        }
+                        if (this.register_password.match(/[$@#&!]+/)) {
+                            strength += 1;
+                        }
+
+                        if (this.register_password === "") {
+                            this.register_strength_msg = "Your password cannot be empty.";
+                            strength = 0
+                        }
+
+                        if (this.register_password.length < 8) {
+                            this.register_strength_msg = "Minimum number of characters is 8.";
+                            strength = 0
+                        } else {
+                            this.register_strength_msg = null;
+                        }
+
+                        switch (strength) {
+                            case 0:
+                                this.register_strength_bar = 5;
+                                this.register_strength_bar_color = 'low'
+                                if (this.register_strength_msg === null) {
+                                    this.register_strength_msg = this.register_strength_msg_not_met
+                                }
+                                break;
+
+                            case 1:
+                                this.register_strength_bar = 25;
+                                this.register_strength_bar_color = 'low'
+                                if (this.register_strength_msg === null) {
+                                    this.register_strength_msg = this.register_strength_msg_not_met
+                                }
+                                break;
+
+                            case 2:
+                                this.register_strength_bar = 50;
+                                this.register_strength_bar_color = 'medium'
+                                if (this.register_strength_msg !== null) {
+                                    this.register_strength_msg = null
+                                }
+                                break;
+
+                            case 3:
+                                this.register_strength_bar = 75;
+                                this.register_strength_bar_color = 'high'
+                                if (this.register_strength_msg !== null) {
+                                    this.register_strength_msg = null
+                                }
+                                break;
+
+                            case 4:
+                                this.register_strength_bar = 100;
+                                this.register_strength_bar_color = 'high'
+                                if (this.register_strength_msg !== null) {
+                                    this.register_strength_msg = null
+                                }
+                                break;
+                        }
+                    }
+                },
+
+                checkEmail() {
+                    if (this.register_password !== ""
+                        && this.register_confirm_password !== ""
+                        && this.register_email_address !== "") {
+
+                        this.register_passwords_match
+                            = this.register_password
+                            === this.register_confirm_password;
+
+                        this.register_email_address_valid
+                            = !!this.register_email_address.match(
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+
+                    } else {
+                        this.register_passwords_match = false;
+                    }
+                    this.register_button_enabled
+                        = this.register_passwords_match
+                        === true
+                        && this.register_strength_bar
+                        >= 50
+                        && this.register_email_address_valid
+                        === true;
+                },
+
+                confirmPassword() {
+                    if (this.register_password !== ""
+                        && this.register_confirm_password !== "") {
+
+                        this.register_passwords_match
+                            = this.register_password
+                            === this.register_confirm_password;
+
+                    } else {
+                        this.register_passwords_match = false;
+                    }
+
+                    if (this.register_passwords_match === false) {
+                        this.register_strength_msg = "Passwords do not match.";
+                    } else {
+                        this.register_strength_msg = null;
+                    }
+
+                    this.register_button_enabled
+                        = this.register_passwords_match
+                        === true
+                        && this.register_strength_bar
+                        >= 50
+                },
+
+            }))
+        })
+
+    </script>
+{% endblock %}
 
 {% block container %}
-    <div class="auth-box">
+    <div class="auth-box" x-data="auth_register">
         <form action="{{ url_for('auth.register') }}" method="post">
+
+            <input type="hidden" name="csrf" value="{{ session.get("csrf") }}">
+            <input type="hidden" name="email_address" x-model="register_email_address">
+            <input type="hidden" name="password" x-model="register_password">
+            <input type="hidden" name="password_confirm" x-model="register_confirm_password">
+
             <label for="first_name">Your First Name</label>
-            <input type="text" id="first_name" name="first_name" value="{{ temp_session.get('first_name', '') }}"
-                   placeholder="Bob" required>
-
-            <label for="email_address">Your Email Address</label>
-            <input type="email" id="email_address" name="email_address" value=""
-                   placeholder="your@email.address" required>
-
-            <label for="password">Choose a Password</label>
-            <input type="password" id="password" name="password" value="" placeholder="***********" required>
-
-            <label for="password_confirm">Confirm That Password</label>
-            <input type="password" id="password_confirm" name="password_confirm" value="" placeholder="***********"
+            <input type="text"
+                   id="first_name"
+                   name="first_name"
+                   value="{{ first_name }}"
+                   placeholder="Bob"
                    required>
 
-            <button type="submit" class="btn mb-1">Register</button>
+            <label for="email_address">Your Email Address</label>
+            <input type="email"
+                   id="email_address"
+                   x-model="register_email_address"
+                   @keydown.debounce.500ms="checkEmail()"
+                   placeholder="your@email.address"
+                   required>
+
+            <label for="password">Choose a Password</label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   x-model="register_password"
+                   @keydown.debounce.500ms="checkPasswordStrength()"
+                   placeholder="***********"
+                   required>
+
+            <label for="password_confirm">Confirm That Password</label>
+            <input type="password"
+                   id="password_confirm"
+                   name="password_confirm"
+                   x-model="register_confirm_password"
+                   @keydown.debounce.500ms="confirmPassword()"
+                   placeholder="***********"
+                   required>
+
+            <div class="inner-option-box-password-strength mb-3">
+                <div class="flex w-100 items-center gap-2 p-2">
+
+                    <small>Password&nbsp;Strength</small>
+
+                    <div class="character-health">
+                        <div
+                                :class="register_strength_bar_color"
+                                :style="{width: register_strength_bar + '%',
+                                'background-color': register_strength_bar_color}">
+                        </div>
+                    </div>
+
+                </div>
+                <div x-cloak x-show="register_strength_msg">
+                    <div class="flex items-center gap-2 p-2">
+                        <img width="18"
+                             src="{{ url_for('static', filename='icons/bad.svg') }}" alt="Error">
+                        <small x-text="register_strength_msg"></small>
+                    </div>
+                </div>
+                <div x-cloak x-show="register_email_address_valid === false">
+                    <div class="flex items-center gap-2 p-2">
+                        <img width="18"
+                             src="{{ url_for('static', filename='icons/bad.svg') }}" alt="Error">
+                        <small>
+                            Looks like you've entered an invalid email address.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn mb-1" :disabled="!register_button_enabled">Register</button>
             <a href="{{ url_for('auth.login') }}" role="button" class="btn fait">Back to Login</a>
         </form>
     </div>

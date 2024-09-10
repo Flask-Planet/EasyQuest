@@ -1,5 +1,5 @@
 from flask import render_template, request, flash, redirect, url_for, session
-from flask_imp.security import login_check
+from flask_imp.security import login_check, include_csrf
 
 from app.flask_.models import User
 from app.flask_.sql import user_sql
@@ -8,11 +8,13 @@ from .. import bp
 
 @bp.route("/register", methods=["GET", "POST"])
 @login_check('authenticated', False, fail_endpoint='quests.index')
+@include_csrf()
 def register():
     #
     # POST
     #
     if request.method == "POST":
+
         first_name = request.form.get('first_name', None)
         email_address = request.form.get('email_address', None)
         password = request.form.get('password', None)
@@ -20,17 +22,18 @@ def register():
 
         if password != password_confirm:
             flash("Passwords do not match", "bad")
-            session.get('temp', {}).update({
-                'first_name': first_name,
-            })
-            return redirect(url_for('register.register'))
+            return render_template(
+                bp.tmpl("register.html"),
+                first_name=first_name,
+                email_address=email_address,
+            )
 
         if User.exists(email_address=email_address):
             flash("Email address already in use", "bad")
-            session.get('temp', {}).update({
-                'first_name': first_name,
-            })
-            return redirect(url_for('register.register'))
+            return render_template(
+                bp.tmpl("register.html"),
+                first_name=first_name,
+            )
 
         user = user_sql.add_user(
             first_name=first_name,

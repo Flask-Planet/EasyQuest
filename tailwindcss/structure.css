@@ -201,6 +201,11 @@ section section {
     background-color: var(--body-bg-color-faint);
 }
 
+.inner-option-box-password-strength {
+    @apply rounded-md w-full p-2;
+    background-color: var(--body-bg-color-faint);
+}
+
 .inner-option-box {
     @apply flex flex-col gap-2 rounded-md w-full p-6;
     background-color: var(--body-bg-color-faint);

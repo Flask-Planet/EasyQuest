@@ -1,5 +1,5 @@
 from flask import render_template, request, session, redirect, url_for, flash
-from flask_imp.security import login_check
+from flask_imp.security import login_check, include_csrf
 
 from app.flask_.sql import user_sql
 from .. import bp
@@ -7,12 +7,14 @@ from .. import bp
 
 @bp.get("/login")
 @login_check('authenticated', False, fail_endpoint='quests.index')
+@include_csrf()
 def login():
     return render_template(bp.tmpl("login.html"))
 
 
 @bp.post("/login")
 @login_check('authenticated', False, fail_endpoint='quests')
+@include_csrf()
 def login_post():
     user = user_sql.login(
         email_address=request.form.get('email_address', None),

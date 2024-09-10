@@ -636,6 +636,11 @@ video {
   margin: 1rem;
 }
 
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .mb-0 {
   margin-bottom: 0px;
 }
@@ -706,6 +711,10 @@ video {
 
 .h-44 {
   height: 11rem;
+}
+
+.h-64 {
+  height: 16rem;
 }
 
 .min-h-64 {
@@ -963,6 +972,10 @@ video {
   --tab-text: #ffffff;
 }
 
+html {
+  background-color: var(--body-bg-color);
+}
+
 body {
   background-color: var(--body-bg-color);
   color: var(--body-text-color);
@@ -1013,6 +1026,10 @@ body.dialog-open {
 dialog {
   border-radius: 0.375rem;
   background: none;
+}
+
+dialog:focus {
+  outline: none;
 }
 
 dialog > div {
@@ -1172,6 +1189,11 @@ section {
   }
 }
 
+section.none {
+  width: 100%;
+  padding: 0px;
+}
+
 section.header {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1191,6 +1213,10 @@ section.bordered {
   padding: 2rem;
   border-color: rgba(238, 238, 238, 0.05);
   background-color: rgba(238, 238, 238, 0.01);
+}
+
+section section {
+  margin: 0px;
 }
 
 /* TOP OPTION BOX */
@@ -2165,12 +2191,12 @@ p {
 }
 
 @media (min-width: 768px) {
-  .md\:order-2 {
-    order: 2;
-  }
-
   .md\:order-1 {
     order: 1;
+  }
+
+  .md\:order-2 {
+    order: 2;
   }
 
   .md\:grid-cols-2 {

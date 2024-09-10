@@ -1,0 +1,83 @@
+{% extends "extends/main.html" %}
+{% block title %}Quests{% endblock %}
+
+
+{% block alpinejs_page_data %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('your_account', () => ({
+
+                show_delete: false,
+
+            }))
+        })
+    </script>
+{% endblock %}
+
+{% block container %}
+    <section class="bordered" x-data="your_account">
+
+        <div class="flex flex-row justify-between gap-2">
+            <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
+                Back
+            </a>
+        </div>
+
+        <div class="inner-option-box">
+            <form action="{{ url_for('account.update_account') }}"
+                  method="post"
+                  class="form-box none">
+
+                <label for="first_name">Your Name</label>
+                <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" required>
+
+                <label for="email_address">Your Email Address</label>
+                <input type="email" name="email_address" id="email_address" value="{{ user.email_address }}" required>
+
+                <button type="submit" class="btn confirm">Update Account</button>
+
+            </form>
+        </div>
+
+        <div class="inner-option-box">
+            <form action="{{ url_for('account.update_password') }}"
+                  method="post"
+                  class="form-box none">
+
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" value="" required>
+
+                <label for="confirm_new_password">Confirm New Password</label>
+                <input type="password" id="confirm_new_password" value="" required>
+
+                <button type="submit" class="btn confirm">Update Password</button>
+
+            </form>
+        </div>
+
+        <div class="inner-option-box gap-6">
+            <strong class="font-bold text-red-700">DANGER ZONE</strong>
+            <p>Deleting your account will remove all quests and characters. This cannot be undone.</p>
+
+            <button class="btn w-48 danger" @click="show_delete = true">
+                Delete Account
+            </button>
+
+            <div x-cloak x-show="show_delete">
+
+                <p class="my-3">Are you sure you want to delete your account?</p>
+
+                <div class="flex gap-2">
+
+                    <button class="btn w-48" @click="show_delete = false" x-cloak x-show="show_delete">No
+                    </button>
+                    <a class="btn danger" href="{{ url_for('account.delete') }}">Yes, Delete</a>
+
+                </div>
+            </div>
+
+        </div>
+
+
+    </section>
+{% endblock %}

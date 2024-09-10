@@ -1,7 +1,7 @@
 from sqlalchemy import select, update, delete
 
 from app.flask_.extensions import db
-from app.flask_.models import Quest
+from app.flask_.models import Quest, Character, ArcCard, NPArcCard, QuestPurgatory, CharacterJoinRequest
 
 
 def get_by_id(quest_id) -> Quest | None:
@@ -55,9 +55,25 @@ def update_arc_cards(quest_id, arc_cards) -> Quest | None:
 
 
 def delete_by_id(quest_id) -> None:
-    sql = (
-        delete(Quest)
-        .where(Quest.quest_id == quest_id)
-    )
-    db.session.execute(sql)
+    sqls = [
+        (
+            delete(ArcCard)
+            .where(ArcCard.fk_quest_id == quest_id)
+        ),
+        (
+            delete(NPArcCard)
+            .where(NPArcCard.fk_quest_id == quest_id)
+        ),
+        (
+            delete(CharacterJoinRequest)
+            .where(CharacterJoinRequest.fk_quest_id == quest_id)
+        ),
+        (
+            delete(Quest)
+            .where(Quest.quest_id == quest_id)
+        )
+    ]
+    for sql in sqls:
+        db.session.execute(sql)
+
     db.session.commit()

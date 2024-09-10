@@ -9,6 +9,7 @@
 
                 socket: null,
                 reconnect_attempts: 0,
+                leaving: false,
 
                 user_id: '{{ session.get("user_id") }}',
                 private_key: '{{ private_key }}',
@@ -143,6 +144,25 @@
                     }))
                 },
 
+                broadcastLeave() {
+                    this.leaving = true
+                    this.socket.send(JSON.stringify({
+                        'user_id': this.user_id,
+                        'private_key': this.private_key,
+                        'action': 'broadcast_to_quest',
+                        'data': {
+                            'message': `The Quest Master has left the Quest!`,
+                            'message_status': 'bad'
+                        }
+                    }))
+                    setTimeout(
+                        () => {
+                            window.location.href = `/quests/`
+                        },
+                        1000
+                    )
+                },
+
                 init() {
                     this.wsConnect()
                 }
@@ -155,168 +175,202 @@
 
 {% block container %}
 
-    <section x-data="quest_master" class="slim">
+    <div x-data="quest_master">
 
-        <section class="collapsible">
+        <section class="slim">
 
-            <button @click="section_quest = !section_quest"
-                    class="btn"
-                    :class="section_quest ? 'open' : 'closed'">
-                <span>Quest: {{ q_quest.title }}</span>
+            <section class="collapsible">
 
-                <img width="12"
+                <button @click="section_quest = !section_quest"
+                        class="btn"
+                        :class="section_quest ? 'open' : 'closed'">
+                    <span>Quest: {{ q_quest.title }}</span>
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_quest"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_quest"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content flex flex-col gap-2"
                      x-cloak
-                     x-show="!section_quest"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
+                     x-show="section_quest">
+
+                    <div class="inner-option-box">
+                        <h1 class="text-2xl">{{ q_quest.title }}</h1>
+                        <p class="mb-3">{{ q_quest.summary }}</p>
+                        <p>Genre: <strong>{{ q_quest.rel_genre.genre }}</strong></p>
+                        <p>Quest Code: <strong>{{ q_quest.quest_code }}</strong></p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="collapsible">
+
+                <button @click="section_join_requests = !section_join_requests"
+                        class="btn"
+                        :class="section_join_requests ? 'open' : 'closed'">
+                    <span>Join Requests (<span x-text="join_requests.length"></span>)</span>
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_join_requests"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_join_requests"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
                      x-cloak
-                     x-show="section_quest"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
+                     x-show="section_join_requests">
 
-            <div class="collapsible-content flex flex-col gap-2"
-                 x-cloak
-                 x-show="section_quest">
+                    <template x-for="jr in join_requests">
 
-                <div class="inner-option-box">
-                    <h1 class="text-2xl">{{ q_quest.title }}</h1>
-                    <p class="mb-3">{{ q_quest.summary }}</p>
-                    <p>Genre: <strong>{{ q_quest.rel_genre.genre }}</strong></p>
-                    <p>Quest Code: <strong>{{ q_quest.quest_code }}</strong></p>
+                        <div class="inner-option-box-min flex justify-between items-center">
+                            <div>
+                                <div>Name: <span x-text="jr.first_name"></span></div>
+                                <div>Email: <span x-text="jr.email_address"></span></div>
+                            </div>
+                            <div>
+                                <button class="btn confirm">Accept</button>
+                                <button class="btn danger">Block</button>
+                            </div>
+                        </div>
+
+                    </template>
+
+                </div>
+
+            </section>
+
+            <section class="collapsible">
+
+                <button @click="section_characters = !section_characters"
+                        class="btn"
+                        :class="section_characters ? 'open' : 'closed'">
+                    Characters
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_characters"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_characters"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_characters">
+
+
+                </div>
+
+            </section>
+
+            <section class="collapsible">
+
+                <button @click="section_np_characters = !section_np_characters"
+                        class="btn"
+                        :class="section_np_characters ? 'open' : 'closed'">
+                    Non-Playable Characters
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_np_characters"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_np_characters"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_np_characters">
+
+
+                </div>
+
+            </section>
+
+            <section class="collapsible">
+
+                <button @click="section_locations = !section_locations"
+                        class="btn"
+                        :class="section_locations ? 'open' : 'closed'">
+                    Locations
+
+                    <img width="12"
+                         x-cloak
+                         x-show="!section_locations"
+                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                         alt="Fold Down">
+                    <img width="12"
+                         x-cloak
+                         x-show="section_locations"
+                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                         alt="Fold Up">
+                </button>
+
+                <div class="collapsible-content"
+                     x-cloak
+                     x-show="section_locations">
+
+
+                </div>
+
+            </section>
+
+        </section>
+
+        <section class="slim" x-data="{show_leave: false}">
+            <div class="flex gap-2">
+                <button class="btn warning w-48" @click="show_leave = true">Leave Quest</button>
+            </div>
+            <div x-cloak x-show="show_leave">
+                <div class="inner-option-box gap-6">
+
+                    <p>Are you sure you want to leave the Quest?</p>
+
+                    <div class="flex gap-2">
+
+                        <button class="btn w-48" @click="show_leave = false">No</button>
+                        <button class="btn confirm" @click="broadcastLeave()">Yes, leave
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+            <div x-cloak x-show="leaving">
+
+                <div class="inner-option-box gap-6">
+                    <p>Leaving Quest...</p>
                 </div>
 
             </div>
-
         </section>
 
-        <section class="collapsible">
-
-            <button @click="section_join_requests = !section_join_requests"
-                    class="btn"
-                    :class="section_join_requests ? 'open' : 'closed'">
-                <span>Join Requests (<span x-text="join_requests.length"></span>)</span>
-
-                <img width="12"
-                     x-cloak
-                     x-show="!section_join_requests"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_join_requests"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_join_requests">
-
-                <template x-for="jr in join_requests">
-
-                    <div class="inner-option-box-min flex justify-between items-center">
-                        <div>
-                            <div>Name: <span x-text="jr.first_name"></span></div>
-                            <div>Email: <span x-text="jr.email_address"></span></div>
-                        </div>
-                        <div>
-                            <button class="btn confirm">Accept</button>
-                            <button class="btn danger">Block</button>
-                        </div>
-                    </div>
-
-                </template>
-
-            </div>
-
-        </section>
-
-        <section class="collapsible">
-
-            <button @click="section_characters = !section_characters"
-                    class="btn"
-                    :class="section_characters ? 'open' : 'closed'">
-                Characters
-
-                <img width="12"
-                     x-cloak
-                     x-show="!section_characters"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_characters"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_characters">
+    </div>
 
 
-            </div>
-
-        </section>
-
-        <section class="collapsible">
-
-            <button @click="section_np_characters = !section_np_characters"
-                    class="btn"
-                    :class="section_np_characters ? 'open' : 'closed'">
-                Non-Playable Characters
-
-                <img width="12"
-                     x-cloak
-                     x-show="!section_np_characters"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_np_characters"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_np_characters">
-
-
-            </div>
-
-        </section>
-
-        <section class="collapsible">
-
-            <button @click="section_locations = !section_locations"
-                    class="btn"
-                    :class="section_locations ? 'open' : 'closed'">
-                Locations
-
-                <img width="12"
-                     x-cloak
-                     x-show="!section_locations"
-                     src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                     alt="Fold Down">
-                <img width="12"
-                     x-cloak
-                     x-show="section_locations"
-                     src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                     alt="Fold Up">
-            </button>
-
-            <div class="collapsible-content"
-                 x-cloak
-                 x-show="section_locations">
-
-
-            </div>
-
-        </section>
-
-    </section>
 
 {% endblock %}

@@ -4,14 +4,14 @@
 {% if session.get("authenticated", False) %}
 
     <nav class="main-menu" role="menubar">
-
-        <img src="{{ url_for('static', filename='easy_quest_logo.gif') }}" alt="EasyQuest Logo">
-
+        <a href="{{ url_for('quests.index') }}">
+            <img src="{{ url_for('static', filename='easy_quest_logo.gif') }}" alt="EasyQuest Logo">
+        </a>
         <ul>
 
             <li>
-                <a href="{{ url_for('quests.index') }}" {{ active_class if 'quest' in request.url }}>
-                    Quests
+                <a href="{{ url_for('account.index') }}" {{ active_class if 'account' in request.url }}>
+                    Your Account
                 </a>
             </li>
 

@@ -25,7 +25,7 @@
                     <h2 class="mt-3 font-bold" x-text="q.__quest__.title"></h2>
                     <p class="mb-3">
                         <span x-text="q.__quest__.summary_truncated"></span>
-                        <a @click="setShowMore($store.body.genreBackground(q.__quest__.genre_id), q.__quest__.title, q.__quest__.summary)"
+                        <a @click="setShowMore(q.__quest__.genre_id, q.__quest__.title, q.__quest__.summary)"
                            x-cloak
                            x-show="q.__quest__.summary.length > 79"
                            class="text-blue-400 cursor-pointer">
@@ -63,8 +63,8 @@
                     Find Quest
                 </button>
                 <button type="button"
-                        class="btn fait"
-                        @click="findQuest(find_quest_code)">
+                        class="btn faint"
+                        @click="find_quest_code = ''">
                     Clear
                 </button>
             </div>

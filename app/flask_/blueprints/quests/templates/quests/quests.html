@@ -52,8 +52,10 @@
                                 this.find_quest_code = ''
                             } else {
                                 if (jsond.message) {
+                                    Alpine.store('body').closeModal(`found_quest`)
                                     Alpine.store("body").showMessage(jsond.message, 'bad')
                                 } else {
+                                    Alpine.store('body').closeModal(`found_quest`)
                                     Alpine.store("body").showMessage(
                                         'Something went wrong! Please try again later!', 'bad')
                                 }
@@ -93,9 +95,9 @@
                         })
                 },
 
-                setShowMore(background, title, summary) {
+                setShowMore(genre_id, title, summary) {
                     this.show_more = true
-                    this.show_more_background = background
+                    this.show_more_background = Alpine.store("body").genreBackground(genre_id)
                     this.show_more_title = title
                     this.show_more_summary = summary
                     Alpine.store("body").showModal('show_more')
@@ -132,7 +134,7 @@
         {##}
         {##}
         <dialog id="show_more">
-            <div x-show="show_more">
+            <div>
 
                 <div :style="show_more_background"
                      class="h-64 w-full rounded-md flex-shrink-0">
@@ -157,7 +159,7 @@
         {##}
         {##}
         <dialog id="found_quest">
-            <div x-show="found_quest">
+            <div>
 
                 <h1 class="text-2xl">Quest found!</h1>
 

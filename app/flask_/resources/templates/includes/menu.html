@@ -10,23 +10,21 @@
         <ul>
 
             <li>
-                <a href="{{ url_for('account.index') }}" {{ active_class if 'account' in request.url }}>
-                    Your Account
+                <a href="{{ url_for('quests.index') }}" {{ active_class if 'quests' in request.url }}>
+                    <img width="24" src="{{ url_for('static', filename='icons/quests.svg') }}" alt="Quests">
                 </a>
             </li>
 
-            {% if session.get('user_type', 0) == 10 %}
-
-                <li>
-                    <a href="{{ url_for('system.users') }}" {{ active_class if 'user' in request.url }}>
-                        Users
-                    </a>
-                </li>
-
-            {% endif %}
+            <li>
+                <a href="{{ url_for('account.index') }}" {{ active_class if 'account' in request.url }}>
+                    <img width="24" src="{{ url_for('static', filename='icons/user.svg') }}" alt="Account">
+                </a>
+            </li>
 
             <li>
-                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                <a href="{{ url_for('auth.logout') }}">
+                    <img width="24" src="{{ url_for('static', filename='icons/log-out.svg') }}" alt="Log Out">
+                </a>
             </li>
 
         </ul>

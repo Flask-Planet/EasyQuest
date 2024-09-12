@@ -18,11 +18,8 @@
                     <h2 class="mt-3 font-bold">{{ quest.title }}</h2>
                     <p class="mb-3">{{ quest.summary|truncate(80) }}
                         {% if quest.summary|length > 79 %}
-                            <a @click="setShowMore(
-                        $store.body.genreBackground({{ quest.fk_genre_id }}),
-                        '{{ quest.title }}',
-                        '{{ quest.summary }}'
-                        )" class="text-blue-400 cursor-pointer">read&nbsp;more</a>
+                            <a @click="setShowMore({{ quest.fk_genre_id }}, '{{ quest.title }}', '{{ quest.summary }}')"
+                               class="text-blue-400 cursor-pointer">read&nbsp;more</a>
                         {% endif %}
                     </p>
                 </div>

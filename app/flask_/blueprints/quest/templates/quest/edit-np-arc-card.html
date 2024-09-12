@@ -44,8 +44,8 @@
             <input type="hidden" name="persuasion" x-model="persuasion">
 
             <div class="flex flex-row justify-start gap-2 mb-6">
-                <a href="{{ url_for('quest.edit', quest_id=q_quest.quest_id, tab='np_arc_cards') }}" role="button"
-                   class="btn fait">
+                <a href="{{ url_for('quest.edit', quest_id=q_quest.quest_id, tab='np_arc_cards') }}#np-arc-cards" role="button"
+                   class="btn faint">
                     Cancel
                 </a>
                 <button type="submit" class="btn confirm">Save Non-Playable Arc Card</button>

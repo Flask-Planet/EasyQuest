@@ -19,7 +19,7 @@ body.dialog-open {
 
 .dark-background {
     @apply w-full h-full;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .flash {
@@ -38,8 +38,12 @@ body.dialog-open {
 }
 
 dialog {
-    @apply rounded-md;
+    @apply hidden rounded-md w-full h-full justify-center items-center;
     background: none;
+}
+
+dialog[open] {
+    @apply flex;
 }
 
 dialog:focus {
@@ -47,7 +51,7 @@ dialog:focus {
 }
 
 dialog > div {
-    @apply flex flex-col flex-shrink-0 gap-4 p-8;
+    @apply flex flex-col flex-shrink-0 gap-4 p-8 w-full rounded-md;
     min-width: 400px;
     max-width: 800px;
     max-height: 600px;
@@ -186,6 +190,11 @@ section section {
     @apply flex flex-col;
 }
 
+.inner-option-box-dark {
+    @apply rounded-md p-4 self-start;
+    background-color: var(--option-box-dark-bg);
+}
+
 .inner-option-box-min {
     @apply rounded-md w-full p-2;
     background-color: var(--option-box-min-bg);
@@ -290,8 +299,18 @@ section section {
     @apply flex flex-col w-full gap-2 p-4 rounded-md;
     min-height: 300px;
     max-width: 430px;
-    background-color: var(--option-box-bg);
-    border: 1px solid var(--option-box-b);
+    background: linear-gradient(99deg, rgb(52, 67, 85) 0%, rgb(37, 49, 64) 27%, rgb(45, 58, 74) 100%);
+    border: 1px solid #614718;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px;
+}
+
+.quest-np-arc-card {
+    @apply flex flex-col w-full gap-2 p-4 rounded-md;
+    min-height: 300px;
+    max-width: 430px;
+    background: linear-gradient(99deg, rgb(52, 67, 85) 0%, rgb(37, 49, 64) 27%, rgb(45, 58, 74) 100%);
+    border: 1px solid #451410;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px;
 }
 
 .quest-arc-card-add {
@@ -305,6 +324,13 @@ section section {
 .quest-new-arc-card {
     @apply w-full;
     max-width: 600px;
+}
+
+
+.quest-location-add {
+    @apply flex flex-col gap-4 w-full py-8 rounded-md justify-center items-center;
+    background-color: var(--option-box-bg-faint);
+    border: 1px solid var(--option-box-b);
 }
 
 
@@ -333,8 +359,9 @@ section section {
 
 .character-card {
     @apply flex flex-col w-full gap-2 p-4 rounded-md;
-    background-color: var(--option-box-bg);
-    border: 1px solid var(--option-box-b);
+    background: linear-gradient(99deg, rgb(40, 52, 67) 0%, rgb(37, 49, 64) 27%, rgb(45, 58, 74) 100%);
+    border: 1px solid #614718;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px;
 }
 
 .character-card-sections {
@@ -353,4 +380,21 @@ section section {
     .character-card-sections {
         @apply grid grid-cols-2 gap-2;
     }
+}
+
+.drag-list {
+    @apply flex flex-col gap-0.5;
+}
+
+.drag-list-item {
+    @apply flex gap-2 items-center p-4 rounded-md;
+    background-color: var(--option-box-bg);
+}
+
+.drag-ghost-bg {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.drag-list-icon {
+    cursor: grab;
 }

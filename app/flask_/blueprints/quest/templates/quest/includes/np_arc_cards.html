@@ -1,18 +1,9 @@
-<section class="collapsible" x-data="{
-    showAddJson() {
-        let dialog = document.getElementById('add-np-arc-cards-from-json');
-        dialog.showModal();
-    },
-    closeAddJson() {
-        let dialog = document.getElementById('add-np-arc-cards-from-json');
-        dialog.close();
-    }
-}">
+<section class="collapsible">
 
     <button @click="section_np_arc_cards = !section_np_arc_cards"
             class="btn"
             :class="section_np_arc_cards ? 'open' : 'closed'">
-        <span>Non-Playable Arc Cards ({{ quest.rel_arc_cards|length }})</span>
+        <span>Total: {{ quest.rel_arc_cards|length }}</span>
 
         <img width="12"
              x-cloak
@@ -32,16 +23,9 @@
 
         <div class="quest-arc-cards">
 
-            <div class="quest-arc-card-add">
-                <a href="{{ url_for('quest.add_np_arc_card', quest_id=quest.quest_id) }}"
-                   class="btn confirm">
-                    New Non-Playable Arc Card</a>
-                <button type="button" class="btn confirm" @click="showAddJson()">Add From JSON</button>
-            </div>
-
             {% for np_arc_card in quest.rel_np_arc_cards %}
 
-                <div class="quest-arc-card" x-data="{show_delete: false}">
+                <div class="quest-np-arc-card" x-data="{show_delete: false}">
 
                     <h3 class="text-2xl">{{ np_arc_card.arc }}</h3>
 
@@ -247,26 +231,6 @@
 
 
             {% endfor %}
-
-
-            <dialog id="add-np-arc-cards-from-json" class="w-full">
-
-                <div>
-
-                    <form action="{{ url_for('quest.add_json_np_arc_cards', quest_id=quest.quest_id) }}"
-                          method="post"
-                          class="flex flex-col w-full">
-
-                        <label for="json_data">JSON</label>
-                        <textarea name="json_data" id="json_data" class="w-full" rows="15" required></textarea>
-                        <div class="flex justify-between">
-                            <button type="button" class="btn" @click="closeAddJson()">Cancel</button>
-                            <button type="submit" class="btn confirm">Add</button>
-                        </div>
-                    </form>
-
-                </div>
-            </dialog>
 
         </div>
 

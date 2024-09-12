@@ -33,13 +33,13 @@
     @apply cursor-not-allowed opacity-60;
 }
 
-.btn.fait {
+.btn.faint {
     background-color: var(--button-fait-bg);
     color: var(--button-fait-text);
     border: 1px solid var(--button-fait-b);
 }
 
-.btn.fait:hover {
+.btn.faint:hover {
     background-color: var(--button-fait-bg-hover);
     color: var(--button-fait-text-hover);
 }

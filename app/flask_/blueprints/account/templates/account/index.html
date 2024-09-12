@@ -144,13 +144,8 @@
 {% endblock %}
 
 {% block container %}
-    <section class="bordered" x-data="your_account">
 
-        <div class="flex flex-row justify-between gap-2">
-            <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
-                Back
-            </a>
-        </div>
+    <section class="bordered" x-data="your_account">
 
         <div class="inner-option-box">
             <form action="{{ url_for('account.update_account') }}"

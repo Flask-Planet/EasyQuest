@@ -1,14 +1,26 @@
 {% extends "extends/main.html" %}
 {% block title %}Quests - {{ quest.title }}{% endblock %}
-
+{% block header %}
+    <script defer src="{{ url_for('static', filename='js/sortable.1.15.3.min.js') }}"></script>
+{% endblock %}
 
 {% block alpinejs_page_data %}
     <script>
         document.addEventListener('alpine:init', () => {
+            /*
+            const locations_sortable = new Sortable(
+                document.getElementById('location-list'), {
+                    animation: 150,
+                    ghostClass: 'drag-ghost-bg',
+                    handle: '.drag-list-icon',
+                })
+             */
+
             Alpine.data('quest_edit', () => ({
                 section_quest: false,
                 section_arc_cards: false,
                 section_np_arc_cards: false,
+                section_locations: true,
 
                 genre_id: {{ quest.fk_genre_id }},
                 title: '{{ quest.title }}',
@@ -20,6 +32,16 @@
 
                 genre_background: null,
 
+                location_list_element: null,
+                location_dragging: null,
+
+                list_moving: [
+                    "blue car",
+                    "red car",
+                    "green car",
+                    "yellow car",
+                ],
+
                 setGenre() {
                     const parsed_genre = parseInt(this.genre_id)
                     const genre = this.genres.find(g => g.genre_id === parsed_genre)
@@ -29,9 +51,15 @@
 
                 init() {
                     this.setGenre()
-                }
+                    /*
+                    locations_sortable.option('onEnd', (e) => {
+                        console.log(e)
+                    })
+                    */
+                },
 
             }))
+
         })
 
     </script>
@@ -39,100 +67,221 @@
 
 
 {% block container %}
-    <section class="slim" x-data="quest_edit">
+    <div x-data="quest_edit">
 
-        <div class="flex flex-col gap-4">
+        {# #}
+        {# QUEST #}
+        {# #}
+        <section class="slim">
 
-            <div class="flex flex-row justify-between">
-                <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
-                    Back
-                </a>
+            <div class="flex flex-col gap-4">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                    <div class="inner-option-box order-2 md:order-1">
+                        <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
+                        <p>Genre: <strong x-text="genre_name"></strong></p>
+
+                        <h2 class="text-2xl mt-3 font-bold">{{ quest.title }}</h2>
+                        <p class="mb-3">{{ quest.summary }}</p>
+                    </div>
+
+                    <div :style="genre_background" class="min-h-64 w-full rounded-md order-1 md:order-2">
+
+                    </div>
+
+                </div>
+
+                <section class="collapsible">
+
+                    <button @click="section_quest = !section_quest"
+                            class="btn"
+                            :class="section_quest ? 'open' : 'closed'">
+                        <span>Edit</span>
+
+                        <img width="12"
+                             x-cloak
+                             x-show="!section_quest"
+                             src="{{ url_for('static', filename="icons/fold-down.svg") }}"
+                             alt="Fold Down">
+                        <img width="12"
+                             x-cloak
+                             x-show="section_quest"
+                             src="{{ url_for('static', filename="icons/fold-up.svg") }}"
+                             alt="Fold Up">
+                    </button>
+
+                    <div class="collapsible-content"
+                         x-cloak
+                         x-show="section_quest">
+
+
+                        <form action="{{ url_for('quest.edit', quest_id=quest.quest_id, var='edit') }}"
+                              method="post"
+                              class="form-box slim">
+
+                            <input type="hidden" name="title" x-model="title">
+                            <input type="hidden" name="summary" x-model="summary">
+                            <input type="hidden" name="fk_genre_id" x-model="genre_id">
+
+                            <label for="fk_genre_id">Genre</label>
+                            <select id="fk_genre_id"
+                                    x-model="genre_id"
+                                    @change="setGenre()"
+                                    required>
+                                <option value="0">Select...</option>
+                                <template x-for="g in genres">
+                                    <option :value="g.genre_id"
+                                            :selected="g.genre_id === genre_id"
+                                            x-text="`${g.genre} - ${g.description}`"
+                                    ></option>
+                                </template>
+                            </select>
+
+                            <label for="title">Title</label>
+                            <input type="text" id="title" x-model="title" required>
+
+                            <label for="summary">Summary</label>
+                            <textarea id="summary" cols="30" rows="5"
+                                      x-model="summary"></textarea>
+
+                            <button type="submit" class="btn confirm">Save</button>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        </section>
 
-                <div class="inner-option-box order-2 md:order-1">
-                    <p>Quest Code: <strong>{{ quest.quest_code }}</strong></p>
-                    <p>Genre: <strong x-text="genre_name"></strong></p>
+        {# #}
+        {# ARC CARDS #}
+        {# #}
+        <a id="arc-cards"></a>
+        <section class="slim">
 
-                    <h2 class="text-2xl mt-3 font-bold">{{ quest.title }}</h2>
-                    <p class="mb-3">{{ quest.summary }}</p>
+            <div :style="$store.body.genreBackground(998)" class="min-h-64 w-full rounded-md">
+                <div class="dark-background p-8 min-h-64 flex flex-col justify-between">
+                    <div class="inner-option-box-dark mb-2">
+                        <h1 class="text-2xl mb-2 font-bold">Arc Cards</h1>
+                        <p>Arc Cards are a set of skills and traits that the player can choose from.</p>
+                        <p>After the player selects an Arc Card, they can set their
+                            character's name and come up with a backstory.</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('quest.add_arc_card', quest_id=quest.quest_id) }}" class="btn confirm">
+                            Add Arc Card
+                        </a>
+                        <button type="button" class="btn confirm"
+                                @click="$store.body.showModal('add-arc-cards-from-json')">
+                            Add From JSON
+                        </button>
+                    </div>
                 </div>
-
-                <div :style="genre_background" class="min-h-64 w-full rounded-md order-1 md:order-2">
-
-                </div>
-
             </div>
-
-            <section class="collapsible">
-
-                <button @click="section_quest = !section_quest"
-                        class="btn"
-                        :class="section_quest ? 'open' : 'closed'">
-                    <span x-text="`Quest: ${title}`"></span>
-
-                    <img width="12"
-                         x-cloak
-                         x-show="!section_quest"
-                         src="{{ url_for('static', filename="icons/fold-down.svg") }}"
-                         alt="Fold Down">
-                    <img width="12"
-                         x-cloak
-                         x-show="section_quest"
-                         src="{{ url_for('static', filename="icons/fold-up.svg") }}"
-                         alt="Fold Up">
-                </button>
-
-                <div class="collapsible-content"
-                     x-cloak
-                     x-show="section_quest">
-
-
-                    <form action="{{ url_for('quest.edit', quest_id=quest.quest_id, var='edit') }}"
-                          method="post"
-                          class="form-box slim">
-
-                        <input type="hidden" name="title" x-model="title">
-                        <input type="hidden" name="summary" x-model="summary">
-                        <input type="hidden" name="fk_genre_id" x-model="genre_id">
-
-                        <label for="fk_genre_id">Genre</label>
-                        <select id="fk_genre_id"
-                                x-model="genre_id"
-                                @change="setGenre()"
-                                required>
-                            <option value="0">Select...</option>
-                            <template x-for="g in genres">
-                                <option :value="g.genre_id"
-                                        :selected="g.genre_id === genre_id"
-                                        x-text="`${g.genre} - ${g.description}`"
-                                ></option>
-                            </template>
-                        </select>
-
-                        <label for="title">Title</label>
-                        <input type="text" id="title" x-model="title" required>
-
-                        <label for="summary">Summary</label>
-                        <textarea id="summary" cols="30" rows="5"
-                                  x-model="summary"></textarea>
-
-                        <button type="submit" class="btn confirm">Save</button>
-
-                    </form>
-
-                </div>
-
-            </section>
-
 
             {% include 'quest/includes/arc_cards.html' %}
+
+
+        </section>
+
+        {# #}
+        {# NP ARC CARDS #}
+        {# #}
+        <a id="np-arc-cards"></a>
+        <section class="slim">
+
+            <div :style="$store.body.genreBackground(999)" class="min-h-64 w-full rounded-md">
+                <div class="dark-background p-8 min-h-64 flex flex-col justify-between">
+                    <div class="inner-option-box-dark mb-2">
+                        <h1 class="text-2xl mb-2 font-bold">Non-Playable Arc Cards</h1>
+                        <p>Non-Playable Arc Cards act the same as regular Arc Cards
+                            but are not selectable by the player.</p>
+                        <p>They are used by the Quest Master to create or spawn characters or enemies in
+                            locations.</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('quest.add_np_arc_card', quest_id=quest.quest_id) }}" class="btn confirm">
+                            Add Non-Playable Arc Card
+                        </a>
+                        <button type="button" class="btn confirm"
+                                @click="$store.body.showModal('add-np-arc-cards-from-json')">
+                            Add From JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {% include 'quest/includes/np_arc_cards.html' %}
 
-        </div>
+        </section>
 
-    </section>
+        {# #}
+        {# QUEST LOCATIONS #}
+        {# #}
+        <a id="locations"></a>
+        <section class="slim">
+            <div :style="$store.body.genreBackground(1001)" class="min-h-64 w-full rounded-md">
+                <div class="dark-background p-8 min-h-64 flex flex-col justify-between">
+                    <div class="inner-option-box-dark mb-2">
+                        <h1 class="text-2xl mb-2 font-bold">Quest Locations</h1>
+                        <p>Voyaging on Quests is set up in a liner fashion.</p>
+                    </div>
+                    <div>
+                        <a href="" class="btn confirm">Add Location</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {# #}
+        {# ADD FROM JSON #}
+        {# #}
+        <dialog id="add-arc-cards-from-json">
+            <div>
+                <form action="{{ url_for('quest.add_json_arc_cards', quest_id=quest.quest_id) }}"
+                      method="post"
+                      class="flex flex-col w-full">
+
+                    <label for="json_data">JSON</label>
+                    <textarea name="json_data" id="json_data" class="w-full mb-3" rows="15" required></textarea>
+
+                    <div class="flex justify-between">
+                        <button type="button" class="btn" @click="$store.body.closeModal('add-arc-cards-from-json')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn confirm">Add</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        {# #}
+        {# ADD FROM JSON #}
+        {# #}
+        <dialog id="add-np-arc-cards-from-json">
+            <div>
+                <form action="{{ url_for('quest.add_json_np_arc_cards', quest_id=quest.quest_id) }}"
+                      method="post"
+                      class="flex flex-col w-full">
+
+                    <label for="json_data">JSON</label>
+                    <textarea name="json_data" id="json_data" class="w-full mb-3" rows="15" required></textarea>
+
+                    <div class="flex justify-between">
+                        <button type="button" class="btn" @click="$store.body.closeModal('add-np-arc-cards-from-json')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn confirm">Add</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+    </div>
 
     <section class="slim" x-data="{show_delete: false}">
         <div>
@@ -156,4 +305,7 @@
         </div>
 
     </section>
+
+
+
 {% endblock %}

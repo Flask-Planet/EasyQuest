@@ -86,12 +86,6 @@
 
     <section class="slim" x-data="quest_purgatory">
 
-        <div class="flex flex-row justify-between">
-            <a href="{{ url_for('quests.index') }}" role="button" class="btn fait">
-                Back
-            </a>
-        </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
             <div class="inner-option-box order-2 sm:order-1">
@@ -112,7 +106,7 @@
         <div :style="$store.body.genreBackground(0)"
              class="min-h-64 w-full rounded-md">
             <div class="dark-background p-8 min-h-64">
-                <h1 class="text-2xl mb-2">You are in Purgatory</h1>
+                <h1 class="text-2xl mb-2 font-bold">You are in Purgatory</h1>
                 <p class="mb-4">Here you can create Characters from Arc Cards
                     and see Characters that you've already created.</p>
                 <p class="mb-2 font-bold">First time here?</p>
@@ -212,6 +206,13 @@
 
     <section class="slim" x-data="{show_leave: false}">
         <div class="flex gap-2">
+            <div class="flex flex-row justify-between">
+                <a href="{{ url_for('quests.index') }}" role="button" class="btn faint">
+                    <img width="18" src="{{ url_for('static', filename='icons/arrow-left.svg') }}" alt="Arrow Left">
+                    Back to All Quests
+                </a>
+            </div>
+
             <button class="btn danger w-48" @click="show_leave = true">Leave Quest</button>
         </div>
         <div x-cloak x-show="show_leave">

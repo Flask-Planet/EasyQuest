@@ -235,8 +235,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn mb-1" :disabled="!register_button_enabled">Register</button>
-            <a href="{{ url_for('auth.login') }}" role="button" class="btn fait">Back to Login</a>
+            <button type="submit" class="btn confirm mb-1" :disabled="!register_button_enabled">Register</button>
+            <a href="{{ url_for('auth.login') }}" role="button" class="btn faint">Back to Login</a>
         </form>
     </div>
 {% endblock %}

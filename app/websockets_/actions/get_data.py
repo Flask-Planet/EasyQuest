@@ -3,7 +3,7 @@ import pprint
 
 from loguru import logger
 
-from app.flask_.sql import character_join_request_sql
+from app.web_.sql import character_join_request_sql
 from app.websockets_ import FLASK_APP
 
 

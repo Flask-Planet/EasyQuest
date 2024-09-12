@@ -14,9 +14,9 @@ def cli():
     pass
 
 
-@cli.command("flask")
-def cli_flask():
-    from app.flask_ import create_app
+@cli.command("web")
+def cli_web():
+    from app.web_ import create_app
     create_app().run(debug=True)
 
 

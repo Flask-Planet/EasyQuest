@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 from loguru import logger
 
-from app.flask_ import create_app
-from app.flask_ import sql as flask_sql
+from app.web_ import create_app
+from app.web_ import sql as flask_sql
 
 
 logger.info("Starting websockets...")

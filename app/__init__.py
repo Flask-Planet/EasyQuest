@@ -1,6 +1,6 @@
 from loguru import logger
 import sys
-from .flask_ import create_app as forward_create_app
+from .web_ import create_app as forward_create_app
 
 logger.remove()
 
@@ -29,7 +29,7 @@ def create_app():
 
 
 def flask():
-    from app.flask_ import create_app
+    from app.web_ import create_app
     create_app().run(debug=True)
 
 

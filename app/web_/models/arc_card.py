@@ -1,0 +1,46 @@
+import sqlalchemy as sqla
+from sqlalchemy.orm import relationship
+
+from app.web_.extensions import db
+
+
+class ArcCard(db.Model):
+    # PriKey
+    arc_card_id = sqla.Column(sqla.Integer, primary_key=True)
+
+    # ForKey
+    fk_quest_id = sqla.Column(sqla.Integer, sqla.ForeignKey('quest.quest_id'), nullable=False)
+
+    # Arc
+    arc = sqla.Column(sqla.String(255), nullable=False)
+    description = sqla.Column(sqla.String, nullable=True)
+    modifier = sqla.Column(sqla.String, nullable=True)
+    bonus = sqla.Column(sqla.String, nullable=True)
+
+    # Weapon
+    starting_weapon_name = sqla.Column(sqla.String(255), nullable=True)
+    starting_weapon_damage = sqla.Column(sqla.Integer, nullable=True, default=0)
+
+    # Combat
+    health = sqla.Column(sqla.Integer, nullable=False, default=100)
+    defence = sqla.Column(sqla.Integer, nullable=False, default=1)
+
+    # Attributes
+    strength = sqla.Column(sqla.Integer, nullable=False, default=0)
+    agility = sqla.Column(sqla.Integer, nullable=False, default=0)
+    intelligence = sqla.Column(sqla.Integer, nullable=False, default=0)
+    luck = sqla.Column(sqla.Integer, nullable=False, default=0)
+    perception = sqla.Column(sqla.Integer, nullable=False, default=0)
+    persuasion = sqla.Column(sqla.Integer, nullable=False, default=0)
+
+    order = sqla.Column(sqla.Integer, nullable=False, default=0)
+
+    # Tracking
+    created = sqla.Column(sqla.DateTime)
+
+    # Relationships
+    rel_quest = relationship(
+        "Quest",
+        primaryjoin="Quest.quest_id==ArcCard.fk_quest_id",
+        back_populates="rel_arc_cards"
+    )
